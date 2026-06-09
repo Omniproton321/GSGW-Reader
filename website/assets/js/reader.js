@@ -5,6 +5,22 @@
   function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function del(k) { try { localStorage.removeItem(k); } catch (e) {} }
 
+  // ---- giscus theme sync (comment box follows the active site theme) ----
+  var GISCUS_THEME = { ghost: "dark", "after-dark": "dark", office: "light", daydream: "light" };
+  var giscusApplied = null;
+  function syncGiscus() {
+    var target = GISCUS_THEME[root.getAttribute("data-theme")] || "dark";
+    if (target === giscusApplied) return;            // already in sync (prevents resize loop)
+    var f = document.querySelector("iframe.giscus-frame");
+    if (!f || !f.contentWindow) return;              // giscus not loaded / no comments on page
+    f.contentWindow.postMessage({ giscus: { setConfig: { theme: target } } }, "https://giscus.app");
+    giscusApplied = target;
+  }
+  // giscus posts a message once its iframe is ready (and on resize) — sync the theme then
+  window.addEventListener("message", function (e) {
+    if (e.origin === "https://giscus.app") syncGiscus();
+  });
+
   // ---- theme + reading preferences ----
   var sel = document.getElementById("theme");
   var fs, lh;

@@ -1,5 +1,5 @@
 {
   "defaultCommentOrder": "newest",
-  "origins": ["https://gsgw.pages.dev"],
+  "origins": ["https://gsgw-reader.pages.dev"],
   "originsRegex": ["http://localhost:[0-9]+"]
 }
