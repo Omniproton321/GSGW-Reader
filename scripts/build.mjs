@@ -173,7 +173,7 @@ ${actionbar({ comments: false, chapters: false })}`;
 
   const splash = `<main class="splash">
 <div class="card">
-<img class="cover" src="/assets/img/logo.webp" alt="${esc(SITE.brand)}">
+<img class="cover" src="/assets/img/logo.png" alt="${esc(SITE.brand)}">
 <h1>${esc(SITE.brand)}</h1>
 <blockquote class="disc">“${esc(SITE.tagline)}”</blockquote>
 <a class="cta" href="/toc.html">Open the Records →</a>
