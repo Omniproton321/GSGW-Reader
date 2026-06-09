@@ -5,5 +5,11 @@
   "brand": "Darkness Exploration Records",
   "tagline": "The doors will close in 30 seconds. Once closed, they will never open again.",
   "description": "An unofficial fan reader for Got Dropped Into A Ghost Story, Still Gotta Work (GSGW).",
-  "site_url": "https://gsgw.pages.dev"
+  "site_url": "https://gsgw.pages.dev",
+  "giscus": {
+    "repo": "omnislash321/GSGW-Reader",
+    "repoId": "REPLACE_REPO_ID",
+    "category": "Announcements",
+    "categoryId": "REPLACE_CATEGORY_ID"
+  }
 }
