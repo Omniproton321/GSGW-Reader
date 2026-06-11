@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build.mjs",
-    "deploy": "wrangler deploy",
-    "preview": "wrangler dev"
+    "serve": "node scripts/build.mjs && npx serve website",
+    "deploy": "wrangler deploy --config worker/wrangler.toml",
+    "preview": "wrangler dev --config worker/wrangler.toml"
   },
   "devDependencies": {
     "wrangler": "^4.99.0"
