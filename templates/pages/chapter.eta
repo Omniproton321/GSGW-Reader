@@ -9,4 +9,4 @@
   <%~ include("../partials/giscus", it) %>
   <% } -%>
 </main>
-<%~ include("../partials/actionbar", { chapters: true, comments: it.comments, themes: it.themes }) %>
+<%~ include("../partials/actionbar", { chapters: true, comments: it.comments, themes: it.themes, tocHref: it.tocHref }) %>

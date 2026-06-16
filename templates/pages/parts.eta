@@ -1,0 +1,23 @@
+<main class="splash">
+  <div class="card card--wide">
+    <img class="cover" data-logo src="/assets/img/logo-dark.png" alt="<%~ it.brandEsc %>">
+    <div class="resume-slot" data-resume hidden></div>
+    <div class="parts">
+      <% it.parts.forEach(function (p) { -%>
+      <% if (p.href) { -%>
+      <a class="part" href="<%= p.href %>">
+        <span class="part-img"><% if (p.image) { %><img src="<%= p.image %>" alt="<%~ p.nameEsc %>" loading="lazy"><% } %><span class="part-label"><%~ p.nameEsc %></span></span>
+        <span class="part-range"><%~ p.rangeEsc %></span>
+      </a>
+      <% } else { -%>
+      <div class="part part--soon" aria-disabled="true">
+        <span class="part-img"><% if (p.image) { %><img src="<%= p.image %>" alt="<%~ p.nameEsc %>" loading="lazy"><% } %><span class="part-label"><%~ p.nameEsc %></span></span>
+        <span class="part-range"><%~ p.rangeEsc %></span>
+      </div>
+      <% } -%>
+      <% }) -%>
+    </div>
+    <p class="back"><a href="/">← Back</a></p>
+  </div>
+  <div class="scan" aria-hidden="true"></div>
+</main>

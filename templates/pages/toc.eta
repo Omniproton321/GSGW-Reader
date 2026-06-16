@@ -1,11 +1,11 @@
 <main class="toc">
-  <header class="chead"><p class="kicker">⟨Darkness⟩ · Recorded Incidents</p><h1>Contents</h1></header>
+  <header class="chead"><p class="kicker"><%~ it.partNameEsc %></p><h1>Contents</h1></header>
   <div class="resume-slot" data-resume hidden></div>
   <div class="toc-controls">
     <input type="search" id="toc-search" placeholder="Search chapters…" autocomplete="off">
     <button id="toc-sort" data-dir="asc">Sort: Oldest first</button>
   </div>
   <ul class="chlist"><% it.chapters.forEach(function (c) { %><li data-num="<%~ c.numEsc %>" data-title="<%~ c.titleLowerEsc %>"><a href="/chapters/<%= c.slug %>.html"><%~ c.titleEsc %></a></li><% }) %></ul>
-  <p class="back"><a href="/">← Back to the records</a></p>
+  <p class="back"><a href="/parts.html">← Back to parts</a></p>
 </main>
 <%~ include("../partials/actionbar", { chapters: false, comments: false, themes: it.themes }) %>

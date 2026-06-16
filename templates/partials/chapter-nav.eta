@@ -1,5 +1,5 @@
 <nav class="chnav">
   <%~ it.prev ? '<a href="/chapters/' + it.prev + '.html">← Prev</a>' : '<span></span>' %>
-  <a href="/toc.html">Menu</a>
+  <a href="<%= it.tocHref %>">Menu</a>
   <%~ it.next ? '<a href="/chapters/' + it.next + '.html">Next →</a>' : '<span></span>' %>
 </nav>

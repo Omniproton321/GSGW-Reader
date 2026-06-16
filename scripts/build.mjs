@@ -33,6 +33,19 @@ function commentsOn() {
   return !!(g && g.repo && g.repoId && !g.repo.includes("YOUR_") && !g.repoId.includes("REPLACE"));
 }
 
+// Parts split the book into acts (see site.json `parts`). A part is "live" once it has a
+// `start`; one without is a "coming soon" placeholder (no TOC, matches no chapters).
+const PARTS = SITE.parts || [];
+// The part a chapter number belongs to (inclusive start..end), or null if none.
+function partOf(num) {
+  const n = parseFloat(num);
+  return PARTS.find((p) => p.start != null && n >= p.start && n <= (p.end ?? Infinity)) || null;
+}
+// Per-part TOC URL (also used as the chapter "Menu" target); falls back to the Parts page.
+function tocHref(part) {
+  return part ? `/toc-${part.slug}.html` : "/parts.html";
+}
+
 function build() {
   rmSync(CHAPTERS_OUT, { recursive: true, force: true }); // clear stale pages
   mkdirSync(CHAPTERS_OUT, { recursive: true });
@@ -68,6 +81,7 @@ function build() {
         bodyHtml: addParaIds(c.html, c.slug),
         prev: prev ? prev.slug : null,
         next: nxt ? nxt.slug : null,
+        tocHref: tocHref(partOf(c.num)),
         comments,
         themes,
         giscus: g,
@@ -78,18 +92,41 @@ function build() {
     writeFileSync(join(CHAPTERS_OUT, `${c.slug}.html`), html);
   });
 
-  const tocChapters = chapters.map((c) => ({
-    slug: c.slug,
-    numEsc: esc(String(c.num)),
-    titleEsc: esc(c.title),
-    titleLowerEsc: esc(c.title.toLowerCase()),
+  // One TOC per live part, each listing only that part's chapters.
+  const liveParts = PARTS.filter((p) => p.start != null);
+  liveParts.forEach((part) => {
+    const tocChapters = chapters
+      .filter((c) => partOf(c.num) === part)
+      .map((c) => ({
+        slug: c.slug,
+        numEsc: esc(String(c.num)),
+        titleEsc: esc(c.title),
+        titleLowerEsc: esc(c.title.toLowerCase()),
+      }));
+    writeFileSync(
+      join(OUT, `toc-${part.slug}.html`),
+      page(
+        "pages/toc",
+        { chapters: tocChapters, partNameEsc: esc(part.name), themes },
+        { title: `${part.name} · ${SITE.site_name}`, description: SITE.description },
+      ),
+    );
+  });
+
+  // Parts landing page: a block per part (image, label, chapter range; "coming soon" when
+  // a part has no start). Links live parts to their TOC.
+  const partBlocks = PARTS.map((p) => ({
+    nameEsc: esc(p.name),
+    image: p.image || "",
+    href: p.start != null ? tocHref(p) : "",
+    rangeEsc: esc(p.start != null ? `Chapters ${p.start}–${p.end ?? "…"}` : "Coming soon"),
   }));
   writeFileSync(
-    join(OUT, "toc.html"),
+    join(OUT, "parts.html"),
     page(
-      "pages/toc",
-      { chapters: tocChapters, themes },
-      { title: `Contents · ${SITE.site_name}`, description: SITE.description },
+      "pages/parts",
+      { parts: partBlocks, brandEsc: esc(SITE.brand), themes },
+      { title: `Parts · ${SITE.site_name}`, description: SITE.description },
     ),
   );
 
@@ -111,7 +148,9 @@ function build() {
   // layout), so it's rendered directly rather than wrapped by page().
   writeFileSync(join(OUT, "editor.html"), eta.render("pages/editor", { themes }));
 
-  console.log(`Built ${chapters.length} chapters + splash + toc + 404 + editor + assets -> ${OUT}`);
+  console.log(
+    `Built ${chapters.length} chapters + splash + parts + ${liveParts.length} part TOCs + 404 + editor + assets -> ${OUT}`,
+  );
 }
 
 build();

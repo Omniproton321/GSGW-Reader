@@ -4,7 +4,7 @@
     <h1><%~ it.brandEsc %></h1>
     <blockquote class="disc">“<%~ it.taglineEsc %>”</blockquote>
     <div class="resume-slot" data-resume hidden></div>
-    <a class="cta" href="/toc.html">Open the Records →</a>
+    <a class="cta" href="/parts.html">Open the Records →</a>
   </div>
   <div class="scan" aria-hidden="true"></div>
 </main>

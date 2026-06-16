@@ -3,7 +3,7 @@
   "short": "GSGW",
   "site_name": "GSGW Reader",
   "brand": "Darkness Exploration Records",
-  "tagline": "The doors will close in 30 seconds. Once closed, they will never open again.",
+  "tagline": "Welcome explorers of darkness",
   "description": "An unofficial fan reader for Got Dropped Into A Ghost Story, Still Gotta Work (GSGW).",
   "site_url": "https://gsgw-reader.pages.dev",
   "counts_api": "https://gsgw-counts.omnislash321.workers.dev/counts",
@@ -15,6 +15,24 @@
     ["office", "Office Hours"],
     ["after-dark", "After Dark"],
     ["daydream", "Daydream"]
+  ],
+  "_comment_parts": "Story parts for the Parts landing page + per-part TOCs. start/end are inclusive chapter numbers; a part with no start is treated as 'coming soon' (no TOC generated).",
+  "parts": [
+    {
+      "name": "Part 1",
+      "slug": "part-1",
+      "start": 1,
+      "end": 208,
+      "image": "/assets/img/part1.jpg"
+    },
+    {
+      "name": "Part 2",
+      "slug": "part-2",
+      "start": 209,
+      "end": 371,
+      "image": "/assets/img/part2.jpg"
+    },
+    { "name": "Part 3", "slug": "part-3" }
   ],
   "giscus": {
     "repo": "omnislash321/GSGW-Reader",

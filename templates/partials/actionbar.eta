@@ -1,8 +1,8 @@
-<% /* Floating action bar + settings panel. Pass { chapters, comments, themes }; chapters/comments toggle those two buttons. */ -%>
+<% /* Floating action bar + settings panel. Pass { chapters, comments, themes, tocHref }; chapters/comments toggle those two buttons, tocHref sets the chapter-list link (defaults to the Parts page). */ -%>
 <div class="actionbar">
   <a class="ab-btn" href="/" title="Home" aria-label="Home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></a>
   <% if (it.chapters) { -%>
-  <a class="ab-btn" href="/toc.html" title="Chapter list" aria-label="Chapter list"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></a>
+  <a class="ab-btn" href="<%= it.tocHref || '/parts.html' %>" title="Chapter list" aria-label="Chapter list"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></a>
   <% } -%>
   <button class="ab-btn" id="ab-settings" title="Settings" aria-label="Settings"><svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></button>
   <% if (it.comments) { -%>
