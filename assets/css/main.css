@@ -197,6 +197,28 @@ a:hover {
   font-size: 1.9rem;
   line-height: 1.2;
 }
+.chead-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.epub-btn {
+  flex: none;
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.epub-btn:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
 
 .chapter,
 .toc {
@@ -599,12 +621,32 @@ a:hover {
   gap: 1.1rem;
   margin: 1.6rem 0 0.5rem;
 }
+.part-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 .part {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   text-align: center;
   color: var(--fg);
+}
+.part-epub {
+  align-self: center;
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+.part-epub:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
 }
 .part:hover {
   text-decoration: none;

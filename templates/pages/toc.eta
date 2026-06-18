@@ -1,5 +1,5 @@
 <main class="toc">
-  <header class="chead"><p class="kicker"><%~ it.partNameEsc %></p><h1>Contents</h1></header>
+  <header class="chead"><p class="kicker"><%~ it.partNameEsc %></p><div class="chead-row"><h1>Contents</h1><% if (it.epubHref) { %><a class="epub-btn" href="<%= it.epubHref %>" download>Download EPUB</a><% } %></div></header>
   <div class="resume-slot" data-resume hidden></div>
   <div class="toc-controls">
     <input type="search" id="toc-search" placeholder="Search chapters…" autocomplete="off">

@@ -8,6 +8,7 @@ import { dirname, join } from "node:path";
 import { Eta } from "eta";
 import { esc } from "./lib/markdown.mjs";
 import { loadChapters, addParaIds } from "./lib/chapters.mjs";
+import { buildEpubs } from "./epub.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "website");
@@ -69,6 +70,10 @@ function build() {
 
   const chapters = loadChapters(join(ROOT, "chapters"));
 
+  // Generate the per-Part EPUBs into website/ and note which Parts got one (for download links).
+  const epubSlugs = new Set(buildEpubs());
+  const epubHref = (slug) => (epubSlugs.has(slug) ? `/gsgw-${slug}.epub` : "");
+
   chapters.forEach((c, i) => {
     const prev = i > 0 ? chapters[i - 1] : null;
     const nxt = i < chapters.length - 1 ? chapters[i + 1] : null;
@@ -107,7 +112,7 @@ function build() {
       join(OUT, `toc-${part.slug}.html`),
       page(
         "pages/toc",
-        { chapters: tocChapters, partNameEsc: esc(part.name), themes },
+        { chapters: tocChapters, partNameEsc: esc(part.name), epubHref: epubHref(part.slug), themes },
         { title: `${part.name} · ${SITE.site_name}`, description: SITE.description },
       ),
     );
@@ -120,6 +125,7 @@ function build() {
     image: p.image || "",
     href: p.start != null ? tocHref(p) : "",
     rangeEsc: esc(p.start != null ? `Chapters ${p.start}–${p.end ?? "…"}` : "Coming soon"),
+    epub: epubHref(p.slug),
   }));
   writeFileSync(
     join(OUT, "parts.html"),
