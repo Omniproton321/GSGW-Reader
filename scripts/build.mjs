@@ -25,7 +25,12 @@ const eta = new Eta({ views: join(ROOT, "templates"), autoEscape: false, autoTri
 // escaped here (templates raw-insert them), matching the old page() helper.
 function page(bodyTemplate, data, { title, description }) {
   const content = eta.render(bodyTemplate, data);
-  return eta.render("layouts/base", { title: esc(title), description: esc(description), content });
+  return eta.render("layouts/base", {
+    title: esc(title),
+    description: esc(description),
+    content,
+    links: SITE.links,
+  });
 }
 
 // True once giscus is configured with real values (not missing / placeholder).
@@ -112,7 +117,12 @@ function build() {
       join(OUT, `toc-${part.slug}.html`),
       page(
         "pages/toc",
-        { chapters: tocChapters, partNameEsc: esc(part.name), epubHref: epubHref(part.slug), themes },
+        {
+          chapters: tocChapters,
+          partNameEsc: esc(part.name),
+          epubHref: epubHref(part.slug),
+          themes,
+        },
         { title: `${part.name} · ${SITE.site_name}`, description: SITE.description },
       ),
     );
@@ -150,12 +160,21 @@ function build() {
     page("pages/404", {}, { title: `404 · ${SITE.site_name}`, description: "Not found" }),
   );
 
+  writeFileSync(
+    join(OUT, "about.html"),
+    page(
+      "pages/about",
+      { brandEsc: esc(SITE.brand), titleEsc: esc(SITE.title), shortEsc: esc(SITE.short) },
+      { title: `About · ${SITE.site_name}`, description: SITE.description },
+    ),
+  );
+
   // The chapter editor is a standalone full-document page (its own <head>/JS, not the base
   // layout), so it's rendered directly rather than wrapped by page().
   writeFileSync(join(OUT, "editor.html"), eta.render("pages/editor", { themes }));
 
   console.log(
-    `Built ${chapters.length} chapters + splash + parts + ${liveParts.length} part TOCs + 404 + editor + assets -> ${OUT}`,
+    `Built ${chapters.length} chapters + splash + parts + ${liveParts.length} part TOCs + 404 + about + editor + assets -> ${OUT}`,
   );
 }
 

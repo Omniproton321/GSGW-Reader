@@ -1,0 +1,14 @@
+<main class="splash">
+  <div class="card card--wide about">
+    <img class="cover" data-logo src="/assets/img/logo-dark.png" alt="<%~ it.brandEsc %>">
+    <h1>About</h1>
+    <p class="kicker">An unofficial fan reader for <em><%~ it.titleEsc %></em>.</p>
+    <div class="about-body">
+      <p>This is a community-run, non-commercial home for reading <em><%~ it.titleEsc %></em> (<%~ it.shortEsc %>) — built by fans, for fans. Chapters are presented in a clean, distraction-free reader with multiple themes, per-paragraph comments, reading-progress tracking, and EPUB downloads.</p>
+      <p>We're not affiliated with the original author or publisher. All rights to the story belong to its creator; this project exists purely to make the work easier to enjoy and discuss. If you can support the official release, please do.</p>
+      <p>Spotted a typo or want to help polish a translation? The reader and its tooling are open source — jump into the repo or say hi on Discord.</p>
+    </div>
+    <p class="back"><a href="/">← Back to the records</a></p>
+  </div>
+  <div class="scan" aria-hidden="true"></div>
+</main>

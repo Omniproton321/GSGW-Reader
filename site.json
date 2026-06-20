@@ -34,6 +34,11 @@
     },
     { "name": "Part 3", "slug": "part-3" }
   ],
+  "_comment_links": "Footer icon-button links. The Info button always points at the internal /about.html page; discord/github are external.",
+  "links": {
+    "discord": "https://discord.gg/AXecqz9yR",
+    "github": "https://github.com/omnislash321/GSGW-Reader"
+  },
   "giscus": {
     "repo": "omnislash321/GSGW-Reader",
     "repoId": "R_kgDOS1PEgw",

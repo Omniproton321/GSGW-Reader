@@ -16,6 +16,14 @@ body {
   font-family: var(--ui);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  /* Sticky-footer column: the page <main> grows to fill the viewport so the
+     footer rides at the bottom of the screen instead of below the fold. */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+body > main {
+  flex: 1 0 auto;
 }
 a {
   color: var(--accent);
@@ -540,7 +548,6 @@ a:hover {
 }
 
 .splash {
-  min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 2rem;
@@ -691,6 +698,64 @@ a:hover {
 .part--soon {
   cursor: default;
   opacity: 0.55;
+}
+
+/* Site footer: icon links (Discord / About / GitHub) at the bottom of every page.
+   Bottom padding clears the floating actionbar where one is present. */
+.site-foot {
+  position: relative;
+  z-index: 2;
+  padding: 2rem 1rem calc(2rem + env(safe-area-inset-bottom));
+}
+/* Pages with the floating actionbar (chapter/TOC) need extra bottom space so the
+   icon row clears it when scrolled to the very bottom. */
+body:has(.actionbar) .site-foot {
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+.foot-links {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.foot-btn {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 999px;
+  color: var(--muted);
+}
+.foot-btn:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  text-decoration: none;
+}
+.foot-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.foot-btn svg.foot-brand {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* About page: prose block inside the splash card. */
+.about-body {
+  text-align: left;
+  color: var(--muted);
+  margin: 1.4rem 0 0.5rem;
+}
+.about-body p {
+  margin: 0 0 1rem;
+}
+.about-body em {
+  color: var(--fg);
+  font-style: italic;
 }
 
 @media (max-width: 480px) {

@@ -12,6 +12,7 @@
   </head>
   <body>
     <%~ it.content %>
+    <%~ include("../partials/footer", { links: it.links }) %>
     <script type="module" src="/assets/js/reader/main.js"></script>
   </body>
 </html>
