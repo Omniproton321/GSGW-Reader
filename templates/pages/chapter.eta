@@ -1,4 +1,5 @@
 <main class="chapter" data-slug="<%= it.slug %>" data-num="<%~ it.numEsc %>" data-title="<%~ it.titleEsc %>">
+  <%~ include("../partials/chapter-nav", { ...it, top: true }) %>
   <div class="page">
     <header class="chead"><h1><%~ it.titleEsc %></h1></header>
     <article class="cbody" id="cbody"><%~ it.bodyHtml %></article>

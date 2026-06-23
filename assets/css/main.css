@@ -49,6 +49,18 @@ a:hover {
   backdrop-filter: blur(10px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
+.ab-toggle {
+  display: none;
+} /* mobile-only FAB; revealed in the max-width:680 block */
+.ab-toggle .ico-close {
+  display: none;
+} /* hamburger by default, X when open */
+body.nav-open .ab-toggle .ico-open {
+  display: none;
+}
+body.nav-open .ab-toggle .ico-close {
+  display: block;
+}
 .ab-btn {
   display: grid;
   place-items: center;
@@ -287,6 +299,315 @@ a:hover {
   font-weight: 700;
 }
 
+/* ---- special blocks (build-time enhancements; see scripts/lib/enhance.mjs) --------------
+   Each block is a RUN of paragraphs (still individual `.cbody > p`, so per-paragraph comments
+   keep working). A continuous box is drawn with per-paragraph borders: side borders on every
+   line, top/radius on `-top`, bottom/radius on `-bot`. Bottom margins collapse inside a box so
+   the borders join into one frame; the existing right-gutter padding is preserved for the
+   comment badge. */
+/* Shared box mechanics: side borders + a generous left indent (the comment gutter already
+   pads the right via `.cbody > p[id]`), bottom margins collapsed so per-paragraph borders
+   join into one frame. Each type sets its own colors/radius below. */
+.cbody > p.idcard,
+.cbody > p.lore {
+  margin-bottom: 0;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  background: var(--card);
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  padding-left: 1.3em;
+}
+.cbody > p.idcard-top,
+.cbody > p.lore-top {
+  border-top: 1px solid var(--border);
+  margin-top: 1.8em;
+}
+.cbody > p.idcard-bot,
+.cbody > p.lore-bot {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.8em;
+}
+
+/* Employee ID card: a centered badge, rounded all corners; first line is a header strip. */
+.cbody > p.idcard {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 9%, var(--card));
+  text-align: center;
+  font-family: var(--ui);
+  letter-spacing: 0.02em;
+}
+.cbody > p.idcard-top {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding-top: 0.8em;
+  font-size: 0.82em;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  font-weight: 700;
+}
+.cbody > p.idcard-bot {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding-bottom: 0.8em;
+}
+
+/* System-message box (game / visual-novel style): a dark translucent navy panel with a
+   glowing blue frame, shown over the prose like an in-game info window. Uses a FIXED dark
+   palette (not the theme vars) so it reads as a UI overlay on light themes too. The hidden
+   delimiter lines (-----/=====) form the glowing top/bottom edges; the first content line
+   reads as the window title. Tuning knobs: --sys-* below. */
+.cbody > p.lore {
+  --sys-bg: rgba(9, 15, 34, 0.93);
+  --sys-line: #3f7bff; /* frame + glow color */
+  --sys-fg: #cfe0ff; /* body text */
+  border-color: var(--sys-line);
+  background: var(--sys-bg);
+  color: var(--sys-fg);
+  font-family: var(--ui);
+  font-size: 0.92em;
+  letter-spacing: 0.01em;
+}
+.cbody > p.lore-top {
+  border-top: 2px solid var(--sys-line);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  box-shadow: 0 -7px 20px -7px var(--sys-line);
+  margin-top: 1.7rem;
+}
+.cbody > p.lore-bot {
+  border-bottom: 2px solid var(--sys-line);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  box-shadow: 0 7px 20px -7px var(--sys-line);
+  margin-bottom: 1.7rem;
+}
+/* The bands hide the ----- / ===== glyphs with font-size:0 — so their box metrics MUST be
+   set in rem/px, not em (em would resolve against the zeroed font-size and collapse to 0). */
+.cbody > p.lore-top,
+.cbody > p.lore-bot {
+  font-size: 0;
+  line-height: 0;
+  height: 0.5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+/* First line after the top band = the entry title; brighten it like a window header. */
+.cbody > p.lore-top + p.lore {
+  color: #fff;
+  font-weight: 600;
+  padding-top: 0.7em;
+}
+
+/* Auto-detected single-line system messages: the book's pervasive bold "[ ... ]" screen /
+   voice markup. Each renders as a self-contained game-UI box (all borders + radius), fixed
+   dark palette so it reads as an overlay on any theme. Bold+ITALIC "[ ... ]" lines (subway
+   PA / broadcast) get the warm `announce` variant. Kept full-width for the comment badge. */
+.cbody > p.sysmsg {
+  --sys-line: #3f7bff;
+  margin: 0; /* group members join; -top/-bot add the outer margin */
+  border-left: 1px solid var(--sys-line);
+  border-right: 1px solid var(--sys-line);
+  background: rgba(9, 15, 34, 0.93);
+  color: #eaf1ff;
+  font-family: var(--ui);
+  font-size: 0.92em;
+  text-align: center;
+  padding: 0.45em 2.1rem 0.45em 1em;
+}
+.cbody > p.sysmsg-top {
+  border-top: 1px solid var(--sys-line);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  margin-top: 1.1em;
+  padding-top: 0.6em;
+  box-shadow: 0 -6px 16px -8px var(--sys-line);
+}
+.cbody > p.sysmsg-bot {
+  border-bottom: 1px solid var(--sys-line);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  margin-bottom: 1.1em;
+  padding-bottom: 0.6em;
+  box-shadow: 0 6px 16px -8px var(--sys-line);
+}
+.cbody > p.sysmsg.announce {
+  --sys-line: #cda049; /* warm amber for PA / broadcast */
+  background: rgba(28, 21, 9, 0.92);
+  color: #f4e8cd;
+  font-style: italic;
+}
+
+/* Chat log: a back-and-forth of short messages (one-off; tag via enhancements.json type
+   "chat"). Kept full-width — not fit-content pills — so the per-paragraph comment badge
+   (absolute, right:0) still sits in its gutter. Speakers are distinguished by side + colour:
+   incoming = default left; the protagonist's replies are gdoc right-aligned (class="right"). */
+.cbody > p.chat {
+  margin: 0.3em 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--muted);
+  border-radius: 10px;
+  padding: 0.45em 2.1rem 0.45em 0.95em;
+  font-family: var(--ui);
+  font-size: 0.92em;
+}
+.cbody > p.chat.right {
+  text-align: right;
+  border-left: 1px solid var(--border);
+  border-right: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 13%, var(--card));
+}
+.cbody > p.chat-top {
+  margin-top: 1.6rem;
+}
+.cbody > p.chat-bot {
+  margin-bottom: 1.6rem;
+}
+
+/* Business card (auto: ━━━ … ━━━ box-drawing rules): a pale paper card with the message
+   scribbled in. The ━ rule lines become hidden top/bottom edges. */
+.cbody > p.card {
+  margin: 0;
+  border-left: 1px solid #cfc7b0;
+  border-right: 1px solid #cfc7b0;
+  background: #f6f3ea;
+  color: #2a2a2a;
+  text-align: center;
+  font-family: var(--ui);
+  font-size: 0.95em;
+  padding: 0.4em 2.1rem 0.4em 1em;
+}
+.cbody > p.card-top {
+  border-top: 1px solid #cfc7b0;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  margin-top: 1.5rem; /* rem, not em — these bands are font-size:0 (em would collapse to 0) */
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.28);
+}
+.cbody > p.card-bot {
+  border-bottom: 1px solid #cfc7b0;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.28);
+}
+.cbody > p.card-top,
+.cbody > p.card-bot {
+  font-size: 0; /* hide the ─── rule glyphs (see rem gotcha note above) */
+  line-height: 0;
+  height: 0.4rem;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Alien-shop "terminal" (auto: ₩/※ catalog & cart runs): a tacky retro web/monospace screen. */
+.cbody > p.terminal {
+  margin: 0;
+  border-left: 1px solid #2c8f5a;
+  border-right: 1px solid #2c8f5a;
+  background: #0a120c;
+  color: #9af6c0;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.86em;
+  text-align: left;
+  padding: 0.3em 2.1rem 0.3em 1em;
+}
+.cbody > p.terminal-top {
+  border-top: 1px solid #2c8f5a;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  margin-top: 1.3em;
+  padding-top: 0.6em;
+}
+.cbody > p.terminal-bot {
+  border-bottom: 1px solid #2c8f5a;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  margin-bottom: 1.3em;
+  padding-bottom: 0.6em;
+}
+
+/* Option / choice list (auto: runs of "1. … / 2. …"): a clean accent-bordered enumeration. */
+.cbody > p.options {
+  margin: 0;
+  border-left: 3px solid var(--accent);
+  border-right: 1px solid var(--border);
+  background: color-mix(in srgb, var(--accent) 6%, var(--card));
+  font-family: var(--ui);
+  font-size: 0.92em;
+  text-align: left;
+  padding: 0.3em 2.1rem 0.3em 1.1em;
+}
+.cbody > p.options-top {
+  border-top: 1px solid var(--border);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  margin-top: 1.1em;
+  padding-top: 0.55em;
+}
+.cbody > p.options-bot {
+  border-bottom: 1px solid var(--border);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  margin-bottom: 1.1em;
+  padding-bottom: 0.55em;
+}
+
+/* Control panel (auto: "MIN MAX" + lever bar + ▲ marker): a monospace machine readout. */
+.cbody > p.panel {
+  margin: 0;
+  border-left: 1px solid #7e8694;
+  border-right: 1px solid #7e8694;
+  background: #15171c;
+  color: #cdd3da;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.9em;
+  letter-spacing: 0.12em;
+  text-align: center;
+  padding: 0.12em 2.1rem 0.12em 1em;
+}
+.cbody > p.panel-top {
+  border-top: 1px solid #7e8694;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin-top: 1.2em;
+  padding-top: 0.5em;
+}
+.cbody > p.panel-bot {
+  border-bottom: 1px solid #7e8694;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  margin-bottom: 1.2em;
+  padding-bottom: 0.5em;
+}
+
+/* Note / document excerpt (listed type "note": diary scrawl, case-file testimony): a dashed
+   paper block in italic. */
+.cbody > p.note {
+  margin: 0;
+  border-left: 1px dashed var(--border);
+  border-right: 1px dashed var(--border);
+  background: color-mix(in srgb, var(--muted) 8%, var(--card));
+  font-style: italic;
+  padding: 0.4em 2.1rem 0.4em 1.2em;
+}
+.cbody > p.note-top {
+  border-top: 1px dashed var(--border);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  margin-top: 1.3em;
+  padding-top: 0.6em;
+}
+.cbody > p.note-bot {
+  border-bottom: 1px dashed var(--border);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  margin-bottom: 1.3em;
+  padding-bottom: 0.6em;
+}
+
 /* per-paragraph inline comments */
 .cbody > p {
   position: relative;
@@ -415,24 +736,33 @@ a:hover {
   font-size: 0.92rem;
   margin: 0.4rem 0 0;
 }
-@media (max-width: 680px) {
-  .cbody > p[id] {
-    padding-right: 1.9rem;
-  } /* slimmer gutter; touch has no hover so show it faintly */
-  .cp-btn {
-    opacity: 0.55;
-  }
-  .cp-panel {
-    width: 100vw;
-  }
-}
 .chnav {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 1rem;
   margin: 3rem 0 0;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);
+}
+.chnav-top {
+  margin: 0 0 1.5rem;
+  padding: 0 0 1.5rem;
+  border-top: 0;
+  border-bottom: 1px solid var(--border);
+}
+.chnav-sel {
+  max-width: 55%;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font: inherit;
+  cursor: pointer;
+}
+.chnav-sel:hover {
+  border-color: var(--accent);
 }
 
 .chlist {
@@ -757,7 +1087,110 @@ body:has(.actionbar) .site-foot {
   color: var(--fg);
   font-style: italic;
 }
+@media (max-width: 680px) {
+  .cbody > p[id] {
+    padding-right: 1.9rem;
+  } /* slimmer gutter; touch has no hover so show it faintly */
+  .cp-btn {
+    opacity: 0.55;
+  }
+  .cp-panel {
+    width: 100vw;
+  }
 
+  /* Mobile: collapse the actionbar + a floating chapter-nav behind one FAB toggle to save
+     screen space. `body.nav-open` (set by the FAB) reveals them. The in-flow bottom nav stays
+     as a no-JS / end-of-chapter fallback; the top nav is repurposed as the floating pill. */
+  .ab-toggle {
+    display: grid;
+    place-items: center;
+    position: fixed;
+    right: 1rem;
+    bottom: calc(1.1rem + env(safe-area-inset-bottom));
+    z-index: 52;
+    width: 2.9rem;
+    height: 2.9rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    color: var(--fg);
+    cursor: pointer;
+  }
+  .ab-toggle svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .actionbar {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(0.5rem);
+    transition:
+      opacity 0.2s,
+      transform 0.2s,
+      visibility 0.2s;
+  }
+  body.nav-open .actionbar {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%);
+  }
+
+  .chnav-top {
+    position: fixed;
+    left: 50%;
+    top: calc(2rem + env(safe-area-inset-top));
+    transform: translateX(-50%) translateY(0.5rem);
+    z-index: 50;
+    width: max-content;
+    max-width: calc(100vw - 1.5rem);
+    justify-content: center;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0.3rem 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    background: var(--card);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.2s,
+      transform 0.2s,
+      visibility 0.2s;
+  }
+  body.nav-open .chnav-top {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%);
+  }
+  /* compact, tidy prev/next inside the floating pill (not link-blue) */
+  .chnav-top a {
+    color: var(--fg);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 0.4rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+  }
+  .chnav-top a:active {
+    background: color-mix(in srgb, var(--fg) 12%, transparent);
+  }
+  .chnav-top .chnav-sel {
+    max-width: 42vw;
+  }
+}
 @media (max-width: 480px) {
   .chead h1 {
     font-size: 1.5rem;

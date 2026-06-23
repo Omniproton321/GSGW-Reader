@@ -1,5 +1,9 @@
-<nav class="chnav">
-  <%~ it.prev ? '<a href="/chapters/' + it.prev + '.html">← Prev</a>' : '<span></span>' %>
-  <a href="<%= it.tocHref %>">Menu</a>
-  <%~ it.next ? '<a href="/chapters/' + it.next + '.html">Next →</a>' : '<span></span>' %>
+<nav class="chnav<%= it.top ? " chnav-top" : "" %>">
+  <%~ it.prev ? '<a rel="prev" href="/chapters/' + it.prev + '.html">← Prev</a>' : '<span></span>' %>
+  <select class="chnav-sel" aria-label="Jump to chapter">
+<% it.jump.forEach(function (ch) { -%>
+    <option value="/chapters/<%= ch.slug %>.html"<%= ch.slug === it.slug ? " selected" : "" %>><%~ ch.labelEsc %></option>
+<% }) -%>
+  </select>
+  <%~ it.next ? '<a rel="next" href="/chapters/' + it.next + '.html">Next →</a>' : '<span></span>' %>
 </nav>

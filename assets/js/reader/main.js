@@ -11,6 +11,29 @@ import "./settings-panel.js";
 import "./paragraph-comments.js";
 import "./progress.js";
 import "./toc.js";
+import "./chapter-nav.js";
+
+// Mobile menu toggle: the actionbar + floating chapter-nav are hidden until the FAB is tapped
+// (CSS handles the breakpoint; this just flips `body.nav-open`). Tap-away / Escape closes it.
+var navToggle = document.getElementById("ab-toggle");
+function setNavOpen(open) {
+  document.body.classList.toggle("nav-open", open);
+  if (navToggle) navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+}
+if (navToggle) {
+  navToggle.addEventListener("click", function (e) {
+    e.stopPropagation();
+    setNavOpen(!document.body.classList.contains("nav-open"));
+  });
+  document.addEventListener("click", function (e) {
+    if (!document.body.classList.contains("nav-open")) return;
+    if (e.target.closest(".actionbar, .ab-toggle, .chnav, .settings-panel, .cp-panel")) return;
+    setNavOpen(false);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") setNavOpen(false);
+  });
+}
 
 // Floating action bar: jump to the comments section + back to top.
 var cBtn = document.getElementById("ab-comments");

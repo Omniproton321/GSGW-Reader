@@ -8,6 +8,7 @@ import { dirname, join } from "node:path";
 import { Eta } from "eta";
 import { esc } from "./lib/markdown.mjs";
 import { loadChapters, addParaIds } from "./lib/chapters.mjs";
+import { enhance, validateChapter } from "./lib/enhance.mjs";
 import { buildEpubs } from "./epub.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -16,6 +17,11 @@ const CHAPTERS_OUT = join(OUT, "chapters");
 const ASSETS_SRC = join(ROOT, "assets"); // hand-authored css/js/img (source of truth)
 const ASSETS_OUT = join(OUT, "assets");
 const SITE = JSON.parse(readFileSync(join(ROOT, "site.json"), "utf8"));
+// Special-block markup config (employee ID cards, etc.), keyed by chapter number. Optional.
+let ENHANCEMENTS = {};
+try {
+  ENHANCEMENTS = JSON.parse(readFileSync(join(ROOT, "scripts", "enhancements.json"), "utf8"));
+} catch {} // no file / bad JSON -> auto-detected lore boxes still apply
 
 // autoEscape:false — templates emit pre-escaped HTML (escaping stays the build's job via esc()).
 // autoTrim:false — preserve template whitespace literally; use `-%>` to slurp newlines where needed.
@@ -79,23 +85,42 @@ function build() {
 
   const chapters = loadChapters(join(ROOT, "chapters"));
 
+  // Surface any enhancements.json anchors that no longer resolve (e.g. wording changed in
+  // the gdoc). Warn, don't fail — the chapter just renders without that special block.
+  for (const c of chapters) {
+    for (const e of validateChapter(c.html, ENHANCEMENTS[c.num])) {
+      console.warn(`  ! enhancement ch${c.num}: ${e}`);
+    }
+  }
+
   // Generate the per-Part EPUBs into website/ and note which Parts got one (for download links).
   const epubSlugs = new Set(buildEpubs());
   const epubHref = (slug) => (epubSlugs.has(slug) ? `/gsgw-${slug}.epub` : "");
 
+  // Chapters grouped by part, for the in-chapter "jump to chapter" dropdown.
+  const jumpByPart = new Map();
+  for (const c of chapters) {
+    const p = partOf(c.num);
+    const key = p ? p.slug : "_";
+    if (!jumpByPart.has(key)) jumpByPart.set(key, []);
+    jumpByPart.get(key).push({ slug: c.slug, labelEsc: esc(c.title) });
+  }
+
   chapters.forEach((c, i) => {
     const prev = i > 0 ? chapters[i - 1] : null;
     const nxt = i < chapters.length - 1 ? chapters[i + 1] : null;
+    const part = partOf(c.num);
     const html = page(
       "pages/chapter",
       {
         slug: c.slug,
         numEsc: esc(String(c.num)),
         titleEsc: esc(c.title),
-        bodyHtml: addParaIds(c.html, c.slug),
+        bodyHtml: addParaIds(enhance(c.html, ENHANCEMENTS[c.num]), c.slug),
         prev: prev ? prev.slug : null,
         next: nxt ? nxt.slug : null,
-        tocHref: tocHref(partOf(c.num)),
+        tocHref: tocHref(part),
+        jump: jumpByPart.get(part ? part.slug : "_"),
         comments,
         themes,
         giscus: g,
