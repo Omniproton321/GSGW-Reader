@@ -4,7 +4,6 @@
     <header class="chead"><h1><%~ it.titleEsc %></h1></header>
     <article class="cbody" id="cbody"><%~ it.bodyHtml %></article>
   </div>
-  <%~ include("../partials/chapter-nav", it) %>
   <% if (it.comments) { -%>
   <%~ include("../partials/giscus-config", it) %>
   <%~ include("../partials/giscus", it) %>

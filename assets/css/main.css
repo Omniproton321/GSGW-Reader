@@ -400,6 +400,43 @@ body.nav-open .ab-toggle .ico-close {
   padding-top: 0.7em;
 }
 
+/* Exploration "record" (listed type "record"): same blue Wiki/system-window look as `lore`, but
+   for an inline exploration-record entry the source did NOT wrap in ===== delimiters (so there are
+   no glyph rows to hide). Unlike lore-top/-bot (font-size:0 hidden bands), record-top/-bot SHOW
+   their text behind a real top/bottom border, and the first line reads as the bright entry title. */
+.cbody > p.record {
+  --sys-bg: rgba(9, 15, 34, 0.93);
+  --sys-line: #3f7bff;
+  --sys-fg: #cfe0ff;
+  margin: 0;
+  border-left: 2px solid var(--sys-line);
+  border-right: 2px solid var(--sys-line);
+  background: var(--sys-bg);
+  color: var(--sys-fg);
+  font-family: var(--ui);
+  font-size: 0.92em;
+  letter-spacing: 0.01em;
+  padding: 0.18em 2.1rem 0.18em 1.3em;
+}
+.cbody > p.record-top {
+  border-top: 2px solid var(--sys-line);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  box-shadow: 0 -7px 20px -7px var(--sys-line);
+  margin-top: 1.7rem;
+  padding-top: 0.7em;
+  color: #fff;
+  font-weight: 600;
+}
+.cbody > p.record-bot {
+  border-bottom: 2px solid var(--sys-line);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  box-shadow: 0 7px 20px -7px var(--sys-line);
+  margin-bottom: 1.7rem;
+  padding-bottom: 0.7em;
+}
+
 /* Auto-detected single-line system messages: the book's pervasive bold "[ ... ]" screen /
    voice markup. Each renders as a self-contained game-UI box (all borders + radius), fixed
    dark palette so it reads as an overlay on any theme. Bold+ITALIC "[ ... ]" lines (subway
@@ -608,6 +645,64 @@ body.nav-open .ab-toggle .ico-close {
   padding-bottom: 0.6em;
 }
 
+/* Voice (listed type "voice"): the mascot / system speaking in spaced-out capitals
+   ("G O O D  B O Y"). Not a box — a centered, wide-tracked display line that reads as a
+   non-human voice looming over the prose. The trailing letter-spacing is balanced by an equal
+   text-indent so the glyphs stay visually centered. */
+.cbody > p.voice {
+  text-align: center;
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 1.05em;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: color-mix(in srgb, #c0392b 50%, var(--fg));
+  margin: 0.5em 0;
+}
+.cbody > p.voice-top {
+  margin-top: 1.7em;
+}
+.cbody > p.voice-bot {
+  margin-bottom: 1.7em;
+}
+
+/* Scroll / invitation (listed type "scroll", source frames it with +++): in-world "transformed
+   text" — exhibition invitations, manual pages. An aged-parchment card in a formal serif. Fixed
+   warm palette (like card/terminal) so it reads the same on every theme. The +++ glyph lines are
+   hidden by enhance.mjs (.boxedge), so the box stands on its own. */
+.cbody > p.scroll {
+  margin: 0;
+  border-left: 1px solid #b9a77f;
+  border-right: 1px solid #b9a77f;
+  background: #efe6d0;
+  color: #3a2f1d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  text-align: left;
+  padding: 0.4em 2.1rem 0.4em 1.3em;
+}
+.cbody > p.scroll-top {
+  border-top: 1px solid #b9a77f;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin-top: 1.5em;
+  padding-top: 0.7em;
+  box-shadow: 0 4px 14px rgba(70, 50, 20, 0.18);
+}
+.cbody > p.scroll-bot {
+  border-bottom: 1px solid #b9a77f;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  margin-bottom: 1.5em;
+  padding-bottom: 0.7em;
+  box-shadow: 0 4px 14px rgba(70, 50, 20, 0.18);
+}
+
+/* Orphan box-edge glyph lines (+++, ===) that framed a listed block in the source: hidden. */
+.cbody > p.boxedge {
+  display: none;
+}
+
 /* per-paragraph inline comments */
 .cbody > p {
   position: relative;
@@ -736,33 +831,65 @@ body.nav-open .ab-toggle .ico-close {
   font-size: 0.92rem;
   margin: 0.4rem 0 0;
 }
+/* Persistent floating chapter nav (Prev / jump / Next): a pill pinned to the top-center that
+   stays on screen while scrolling, so prev/next are reachable without going to the top or bottom
+   of the chapter. This is the ONLY chapter nav now (the in-flow top+bottom copies were removed).
+   On mobile it's hidden behind the actionbar FAB (see the max-width:680 block) to save space. */
 .chnav {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  margin: 3rem 0 0;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
 }
 .chnav-top {
-  margin: 0 0 1.5rem;
-  padding: 0 0 1.5rem;
-  border-top: 0;
-  border-bottom: 1px solid var(--border);
+  position: fixed;
+  left: 50%;
+  top: calc(0.9rem + env(safe-area-inset-top));
+  transform: translateX(-50%);
+  z-index: 50;
+  width: max-content;
+  max-width: min(54rem, calc(100vw - 1.5rem));
+  justify-content: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 1.6rem;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+.chnav-top a {
+  color: var(--fg);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+.chnav-top a:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  text-decoration: none;
 }
 .chnav-sel {
-  max-width: 55%;
+  max-width: 22rem;
   background: var(--bg);
   color: var(--fg);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  padding: 0.3rem 0.6rem;
   font: inherit;
+  font-size: 0.9rem;
   cursor: pointer;
 }
 .chnav-sel:hover {
   border-color: var(--accent);
+}
+/* Desktop: the floating pill is always visible, so push the chapter down to clear it. (On mobile
+   the pill is hidden behind the FAB, so the base top padding is fine.) */
+@media (min-width: 681px) {
+  .chapter {
+    padding-top: 4.6rem;
+  }
 }
 
 .chlist {

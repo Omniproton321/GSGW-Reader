@@ -21,6 +21,14 @@ const ENT = {
   "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'", "&nbsp;": " ",
   "&rsquo;": "’", "&lsquo;": "‘", "&ldquo;": "“", "&rdquo;": "”",
   "&mdash;": "—", "&ndash;": "–", "&hellip;": "…",
+  // Accented Latin letters the gdoc export emits as named entities (e.g. "Bon app&eacute;tit",
+  // "d&eacute;j&agrave; vu") — decode so config anchors can be written with the real glyph.
+  "&eacute;": "é", "&egrave;": "è", "&ecirc;": "ê", "&euml;": "ë",
+  "&aacute;": "á", "&agrave;": "à", "&acirc;": "â", "&auml;": "ä", "&atilde;": "ã", "&aring;": "å",
+  "&iacute;": "í", "&icirc;": "î", "&iuml;": "ï",
+  "&oacute;": "ó", "&ocirc;": "ô", "&ouml;": "ö", "&otilde;": "õ",
+  "&uacute;": "ú", "&ucirc;": "û", "&uuml;": "ü",
+  "&ccedil;": "ç", "&ntilde;": "ñ",
 };
 
 const isP = (line) => /^<p[\s>]/.test(line);
@@ -63,7 +71,7 @@ function tagRange(lines, start, end, type) {
 }
 
 // Every class this module assigns — used to stop two detectors fighting over one paragraph.
-const TAGGED = /\sclass="[^"]*\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note)\b/;
+const TAGGED = /\sclass="[^"]*\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note|voice|scroll|record)\b/;
 const isTagged = (line) => TAGGED.test(line);
 
 // Tag each maximal run of >=minLen consecutive, not-already-tagged paragraphs that satisfy
@@ -193,6 +201,25 @@ export function enhance(html, blocks = []) {
     let end = i;
     for (let j = i + 1; j < lines.length && isP(lines[j]) && isGaugeLine(lines[j]); j++) end = j;
     if (end > i) tagRange(lines, i, end, "panel");
+  }
+
+  // 8. Hide the box-edge glyph lines that FRAME a styled box. A listed `scroll`/`lore` block is
+  //    anchored by its CONTENT, so the source's `+++` / `===` framing glyphs (below the 5+
+  //    auto-lore threshold, or using `+`) survive as visible noise. Hide such a glyph line ONLY
+  //    when it sits directly next to a box-tagged paragraph — so a stray, unrelated delimiter
+  //    elsewhere is left untouched rather than silently removed.
+  const adjP = (i, step) => {
+    for (let k = i + step; k >= 0 && k < lines.length; k += step) if (isP(lines[k])) return k;
+    return -1;
+  };
+  for (let i = 0; i < lines.length; i++) {
+    if (!isP(lines[i]) || isTagged(lines[i])) continue;
+    if (!/^(?:\+{3,}|={3,})$/.test(plainText(lines[i]))) continue;
+    const prev = adjP(i, -1);
+    const next = adjP(i, 1);
+    if ((prev >= 0 && isTagged(lines[prev])) || (next >= 0 && isTagged(lines[next]))) {
+      lines[i] = addClass(lines[i], "boxedge");
+    }
   }
 
   return lines.join("\n");
