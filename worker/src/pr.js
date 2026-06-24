@@ -158,10 +158,17 @@ export async function createPR(req, env) {
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sha: newCommitSha }),
+          // force: the new commit is rebuilt from main + all current drafts (a full
+          // replacement of the branch), so it isn't a fast-forward of the branch tip.
+          body: JSON.stringify({ sha: newCommitSha, force: true }),
         },
       );
-      if (!updateRefRes.ok) throw new Error("Failed to update branch: " + updateRefRes.statusText);
+      if (!updateRefRes.ok) {
+        const text = await updateRefRes.text();
+        throw new Error(
+          `Failed to update branch: ${updateRefRes.status} ${updateRefRes.statusText} - ${text.slice(0, 200)}`,
+        );
+      }
       // Return existing PR URL
       prData = { html_url: `https://github.com/${owner}/${repoName}/pull/${existingPrNumber}` };
     } else {
