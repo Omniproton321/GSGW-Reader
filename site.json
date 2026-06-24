@@ -16,7 +16,7 @@
     ["after-dark", "After Dark"],
     ["daydream", "Daydream"]
   ],
-  "_comment_parts": "Story parts for the Parts landing page + per-part TOCs. start/end are inclusive chapter numbers; a part with no start is treated as 'coming soon' (no TOC generated).",
+  "_comment_parts": "Story parts for the Parts landing page + per-part TOCs. start/end are inclusive chapter numbers; a part with no start is treated as 'coming soon' (no TOC generated). Optional 'release' (YYYY-MM-DD) shows a release date on a coming-soon part.",
   "parts": [
     {
       "name": "Part 1",
@@ -32,7 +32,7 @@
       "end": 371,
       "image": "/assets/img/part2.jpg"
     },
-    { "name": "Part 3", "slug": "part-3" }
+    { "name": "Part 3", "slug": "part-3", "release": "2026-07-07" }
   ],
   "_comment_links": "Footer icon-button links. The Info button always points at the internal /about.html page; discord/github are external.",
   "links": {

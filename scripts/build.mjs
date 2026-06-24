@@ -158,12 +158,25 @@ function build() {
   });
 
   // Parts landing page: a block per part (image, label, chapter range; "coming soon" when
-  // a part has no start). Links live parts to their TOC.
+  // a part has no start, or a release date when one is set). Links live parts to their TOC.
+  const fmtRelease = (iso) =>
+    new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    });
   const partBlocks = PARTS.map((p) => ({
     nameEsc: esc(p.name),
     image: p.image || "",
     href: p.start != null ? tocHref(p) : "",
-    rangeEsc: esc(p.start != null ? `Chapters ${p.start}–${p.end ?? "…"}` : "Coming soon"),
+    rangeEsc: esc(
+      p.start != null
+        ? `Chapters ${p.start}–${p.end ?? "…"}`
+        : p.release
+          ? `Releases ${fmtRelease(p.release)}`
+          : "Coming soon",
+    ),
     epub: epubHref(p.slug),
   }));
   writeFileSync(
