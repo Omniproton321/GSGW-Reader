@@ -59,6 +59,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Copying out of the editor (e.g. to paste back into Google Docs) must REVERSE the
+  // canonical conversions the paste path applied — otherwise gdocs can't read them:
+  //   • alignment is stored as a CSS class (<p class="right">) whose text-align rule
+  //     lives in the stylesheet and doesn't ride along on the clipboard;
+  //   • font size is stored in em, but gdocs is pt-native and ignores em.
+  // We rewrite only the copied payload to a gdocs-friendly inline form; emphasis
+  // (strong/em/color hex) is already native, and the editor's saved markup is untouched.
+  const gdocsFriendlyClipboard = (e) => {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed || !state.editor.contains(sel.anchorNode)) return;
+    const holder = document.createElement("div");
+    holder.appendChild(sel.getRangeAt(0).cloneContents());
+    for (const el of holder.querySelectorAll(".center, .right")) {
+      el.style.textAlign = el.classList.contains("center") ? "center" : "right";
+    }
+    for (const el of holder.querySelectorAll('[style*="font-size"]')) {
+      const m = /([\d.]+)\s*em/.exec(el.style.fontSize); // em -> pt (the editor used pt/12)
+      if (m) el.style.fontSize = +(parseFloat(m[1]) * 12).toFixed(1) + "pt";
+    }
+    e.clipboardData.setData("text/html", holder.innerHTML);
+    e.clipboardData.setData("text/plain", sel.toString());
+    e.preventDefault();
+    if (e.type === "cut") document.execCommand("delete");
+  };
+  state.editor.addEventListener("copy", gdocsFriendlyClipboard);
+  state.editor.addEventListener("cut", gdocsFriendlyClipboard);
+
   // Remember the editor's selection so toolbar inputs can restore it
   document.addEventListener("selectionchange", () => {
     const sel = window.getSelection();
