@@ -8,7 +8,7 @@ import { dirname, join } from "node:path";
 import { Eta } from "eta";
 import { esc } from "./lib/markdown.mjs";
 import { loadChapters, addParaIds } from "./lib/chapters.mjs";
-import { enhance, validateChapter } from "./lib/enhance.mjs";
+import { enhance, footnotes, validateChapter } from "./lib/enhance.mjs";
 import { buildEpubs } from "./epub.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -116,7 +116,7 @@ function build() {
         slug: c.slug,
         numEsc: esc(String(c.num)),
         titleEsc: esc(c.title),
-        bodyHtml: addParaIds(enhance(c.html, ENHANCEMENTS[c.num]), c.slug),
+        bodyHtml: addParaIds(footnotes(enhance(c.html, ENHANCEMENTS[c.num])), c.slug),
         prev: prev ? prev.slug : null,
         next: nxt ? nxt.slug : null,
         tocHref: tocHref(part),

@@ -4,30 +4,57 @@
 // so content pasted from Google Docs into the editor ends up byte-identical to content
 // pulled by the importer. Pure string/regex (no DOM) so it runs in the browser AND in Node.
 //
-// What we KEEP from a run of text: italic -> <em>, bold -> <strong>, a non-default text
-// color, and a *large* font size (emphasis headings) expressed as relative em. Everything
-// else Google Docs emits — font-family, background-color, font-weight:400, white-space,
-// vertical-align, the docs-internal-guid <b> wrappers, color:#000000 (the default body
-// black that would be invisible in dark themes) — is dropped so the reader's theme wins.
+// What we KEEP from a run of text: italic -> <em>, bold -> <strong>, strikethrough -> <s>, a
+// recognised text colour / highlight (mapped to a theme-aware role class — see colorRole), and a
+// *large* font size (emphasis headings) expressed as relative em. Everything else Google Docs
+// emits — font-family, font-weight:400, underline, white-space, vertical-align, the
+// docs-internal-guid <b> wrappers, and any unmapped colour (incl. the default body black that
+// would be invisible in dark themes) — is dropped so the reader's theme wins.
 
 export const SIZE_EMPHASIS_PT = 16; // only sizes >= this are kept (as relative em); body 12pt is dropped
 
-const DEFAULT_COLORS = new Set(["#000", "#000000", "black", "rgb(0,0,0)"]);
-
-// Normalise a CSS color to a comparable lowercase form; rgb(r,g,b) -> #rrggbb.
+// Normalise a CSS colour to a comparable lowercase form; rgb(r,g,b) -> #rrggbb.
 function normColor(c) {
   c = c.trim().toLowerCase();
   const m = c.match(/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/);
-  if (m) return "#" + m.slice(1, 4).map((n) => (+n).toString(16).padStart(2, "0")).join("");
+  if (m)
+    return (
+      "#" +
+      m
+        .slice(1, 4)
+        .map((n) => (+n).toString(16).padStart(2, "0"))
+        .join("")
+    );
   return c;
 }
-function isDefaultColor(c) {
-  return DEFAULT_COLORS.has(c.replace(/\s+/g, ""));
+
+// Google Docs palette colours we keep, mapped to theme-aware semantic roles (palette in
+// themes.css, applied in main.css). Text colour -> <span class="c-ROLE">; a highlight
+// (background-colour) -> <mark class="c-ROLE">. Any colour not listed here is dropped — the
+// importer surfaces unmapped colours in its excluded-formatting report so they can be added.
+const COLOR_ROLES = {
+  "#ff0000": "danger",
+  "#e06666": "danger",
+  "#4a86e8": "info",
+  "#1155cc": "info",
+  "#666666": "muted",
+  "#999999": "muted",
+  "#bf9000": "warn",
+};
+export function colorRole(color) {
+  return color ? COLOR_ROLES[normColor(color)] || null : null;
 }
 
 // Pull the emphasis we preserve out of a style="" attribute value.
 function emphasisFromStyle(style) {
-  const out = { bold: false, italic: false, color: null, sizeEm: null };
+  const out = {
+    bold: false,
+    italic: false,
+    strike: false,
+    color: null,
+    highlight: null,
+    sizeEm: null,
+  };
   if (!style) return out;
   const decls = {};
   for (const d of style.split(";")) {
@@ -40,10 +67,13 @@ function emphasisFromStyle(style) {
     out.bold = w === "bold" || parseInt(w, 10) >= 600;
   }
   if (decls["font-style"]) out.italic = /italic|oblique/.test(decls["font-style"]);
-  if (decls["color"]) {
-    const c = normColor(decls["color"]);
-    if (!isDefaultColor(c)) out.color = c;
+  // Strikethrough only (underline is intentionally dropped). Docs may combine decorations
+  // (e.g. "underline line-through"), so match the token anywhere in the value.
+  if (/line-through/.test(decls["text-decoration-line"] || decls["text-decoration"] || "")) {
+    out.strike = true;
   }
+  if (decls["color"]) out.color = colorRole(decls["color"]);
+  if (decls["background-color"]) out.highlight = colorRole(decls["background-color"]);
   const fs = decls["font-size"];
   if (fs) {
     let m;
@@ -59,14 +89,15 @@ function emphasisFromStyle(style) {
   return out;
 }
 
-// Wrap inner HTML in the canonical emphasis tags. Order matches import-gdoc:
-// <strong><em><span style="color:…;font-size:…em">…</span></em></strong>.
-export function wrapEmphasis({ bold, italic, color, sizeEm }, inner) {
-  const decl = [];
-  if (color) decl.push(`color:${color}`);
-  if (sizeEm) decl.push(`font-size:${sizeEm}`);
+// Wrap inner HTML in the canonical emphasis tags. Order (innermost out): font-size span,
+// colour-role span, <mark> highlight, <s>, <em>, <strong>. Shared so the editor paste path and
+// the importer emit byte-identical markup.
+export function wrapEmphasis({ bold, italic, strike, color, highlight, sizeEm }, inner) {
   let out = inner;
-  if (decl.length) out = `<span style="${decl.join(";")}">${out}</span>`;
+  if (sizeEm) out = `<span style="font-size:${sizeEm}">${out}</span>`;
+  if (color) out = `<span class="c-${color}">${out}</span>`;
+  if (highlight) out = `<mark class="c-${highlight}">${out}</mark>`;
+  if (strike) out = `<s>${out}</s>`;
   if (italic) out = `<em>${out}</em>`;
   if (bold) out = `<strong>${out}</strong>`;
   return out;
@@ -136,6 +167,7 @@ function serialize(nodes) {
     // A <b>/<strong> is bold unless it explicitly carries font-weight:normal (Docs' wrapper trick).
     if (n.name === "b" || n.name === "strong") emp.bold = !/font-weight\s*:\s*normal/i.test(style);
     if (n.name === "i" || n.name === "em") emp.italic = true;
+    if (n.name === "s" || n.name === "strike" || n.name === "del") emp.strike = true;
     // span / a / font / unknown inline tags contribute only their style-based emphasis,
     // so links and Docs noise spans get unwrapped to their text.
     out += wrapEmphasis(emp, inner);

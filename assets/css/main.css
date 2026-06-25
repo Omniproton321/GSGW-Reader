@@ -298,6 +298,75 @@ body.nav-open .ab-toggle .ico-close {
 .cbody strong {
   font-weight: 700;
 }
+.cbody s {
+  text-decoration: line-through;
+}
+
+/* ---- imported colour roles (mapped from Google Docs colours in gdocs.js; palette in
+   themes.css). Text roles tint the glyphs; <mark> roles tint a translucent background that
+   adapts to any theme. The `muted` role reuses the theme's secondary-text colour. */
+.cbody .c-muted {
+  color: var(--muted);
+}
+.cbody .c-info {
+  color: var(--info);
+}
+.cbody .c-warn {
+  color: var(--warn);
+}
+.cbody .c-danger {
+  color: var(--danger);
+}
+.cbody mark {
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 0.15em;
+}
+.cbody mark.c-muted {
+  background: color-mix(in srgb, var(--muted) 22%, transparent);
+}
+.cbody mark.c-info {
+  background: color-mix(in srgb, var(--info) 20%, transparent);
+}
+.cbody mark.c-warn {
+  background: color-mix(in srgb, var(--warn) 24%, transparent);
+}
+.cbody mark.c-danger {
+  background: color-mix(in srgb, var(--danger) 20%, transparent);
+}
+
+/* ---- footnotes / TL notes (build-time; see footnotes() in scripts/lib/enhance.mjs) ------
+   Inline "[N]" markers link down to their "[N]:" definition at the chapter end and back. */
+.cbody .fnref,
+.cbody .fn-num,
+.cbody .fn-src,
+.cbody .fn-back {
+  color: var(--accent);
+  text-decoration: none;
+}
+.cbody .fnref {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.cbody .fnref:hover,
+.cbody .fn-src:hover,
+.cbody .fn-back:hover {
+  text-decoration: underline;
+}
+.cbody .fn-back {
+  margin-left: 0.4em;
+  font-size: 0.9em;
+}
+/* Clear the sticky top nav when jumping, and briefly flash the landing line. */
+.cbody [id^="fn-"],
+.cbody [id^="fnref-"] {
+  scroll-margin-top: 5rem;
+}
+.cbody [id^="fn-"]:target,
+.cbody [id^="fnref-"]:target {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: 3px;
+}
 
 /* ---- special blocks (build-time enhancements; see scripts/lib/enhance.mjs) --------------
    Each block is a RUN of paragraphs (still individual `.cbody > p`, so per-paragraph comments

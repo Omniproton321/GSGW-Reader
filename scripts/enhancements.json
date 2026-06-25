@@ -1,34 +1,59 @@
 {
-  "_doc": "Maintainable list of special-styled chapter blocks that have NO self-evident markup. Keys are chapter numbers; each entry tags the paragraph run from `from`..`to` (inclusive) with a CSS class family `<type>`/`<type>-top`/`<type>-bot`, styled in assets/css/main.css. Anchors match a paragraph's PLAIN TEXT (tags + entities decoded), smallest valid span wins. `node devScripts/import-gdoc.mjs` re-validates anchors after an import and warns on misses. Most special blocks are AUTO-detected and need NO entry here: lore/system boxes (5+ ===/--- delimited), `[ ... ]` system messages (+ italic = announcement), business `card` (━━━ delimited), `terminal` (₩/※ shop runs), `options` (numbered lists), `panel` (MIN MAX gauge). Only list types with no reliable signal: idcard, chat, note, voice (spaced-caps mascot/system voice, e.g. `G O O D B O Y`), scroll (in-world invitation/manual text framed by `+++` in the source). A box delimiter shorter than the auto threshold (e.g. a `===` User-Guide box) is also listed by its content lines. Lone box-edge glyph lines (`+++`, `===`) framing a listed block are auto-hidden by enhance.mjs. NOTE: a listed entry styles ONE span (smallest from..to); a line that repeats identically in a chapter (e.g. `G O O D B O Y`) can only be tagged at its first occurrence.",
+  "_doc": "Maintainable list of special-styled chapter blocks that have NO self-evident markup. Keys are chapter numbers; each entry tags the paragraph run from `from`..`to` (inclusive) with a CSS class family `<type>`/`<type>-top`/`<type>-bot`, styled in assets/css/main.css. Anchors match a paragraph's PLAIN TEXT (tags + entities decoded), smallest valid span wins. `node devScripts/import-gdoc.mjs` re-validates anchors after an import and warns on misses. Most special blocks are AUTO-detected and need NO entry here: lore/system boxes (5+ ===/--- delimited), `[ ... ]` system messages (+ italic = announcement), business `card` (━━━ delimited), `terminal` (₩/※ shop runs), `options` (numbered lists), `panel` (MIN MAX gauge). Only list types with no reliable signal: idcard, chat, note, voice (spaced-caps mascot/system voice, e.g. `G O O D B O Y`), scroll (in-world invitation/manual text framed by `+++` in the source). A box delimiter shorter than the auto threshold (e.g. a `===` User-Guide box) is also listed by its content lines. Lone box-edge glyph lines (`+++`, `===`) framing a listed block are auto-hidden by enhance.mjs. NOTE: a listed entry styles ONE span (smallest from..to), and each entry claims the next not-yet-tagged match; a line that repeats identically in a chapter (e.g. `G O O D B O Y`) is tagged once PER listed entry, so list it N times to style all N occurrences.",
   "1": [
     { "type": "idcard", "from": "[Daydream Inc.]", "to": "Field Exploration team" },
-    { "type": "chat", "from": "-Is it true Kim Soleum turned down a girl he liked because he was too scared to watch the horror movie she wanted to see?", "to": "-sry" }
+    {
+      "type": "chat",
+      "from": "-Is it true Kim Soleum turned down a girl he liked because he was too scared to watch the horror movie she wanted to see?",
+      "to": "-sry"
+    }
   ],
   "4": [
-    { "type": "sysmsg", "from": "<Congratulations on Completing your Probationary Period>", "to": ": Congratulations. You have been officially hired by Daydream Corporation's Field Exploration team." }
+    {
+      "type": "sysmsg",
+      "from": "<Congratulations on Completing your Probationary Period>",
+      "to": ": Congratulations. You have been officially hired by Daydream Corporation's Field Exploration team."
+    }
   ],
-  "6": [
-    { "type": "note", "from": "-RUN AWAY", "to": "-RUN AWAY" }
-  ],
+  "6": [{ "type": "note", "from": "-RUN AWAY", "to": "-RUN AWAY" }],
   "14": [
-    { "type": "chat", "from": "-Did you guys see the official notice that just went up?", "to": "-Is Kim Soleum the one who wore that weird mask with horns…?" }
+    {
+      "type": "chat",
+      "from": "-Did you guys see the official notice that just went up?",
+      "to": "-Is Kim Soleum the one who wore that weird mask with horns…?"
+    }
   ],
-  "17": [
-    { "type": "chat", "from": "-I’m putting 10 on D.", "to": "-OK." }
-  ],
+  "17": [{ "type": "chat", "from": "-I’m putting 10 on D.", "to": "-OK." }],
   "20": [
-    { "type": "note", "from": "Testimony #4 (Survivor: Park Yae-in)", "to": "Later, plush dolls made by recycling the clothing and bones of said individuals were discovered in the souvenir shop. (Presumed deceased)" }
+    {
+      "type": "note",
+      "from": "Testimony #4 (Survivor: Park Yae-in)",
+      "to": "Later, plush dolls made by recycling the clothing and bones of said individuals were discovered in the souvenir shop. (Presumed deceased)"
+    }
   ],
   "22": [
-    { "type": "lore", "from": "Cheerful Theme Park User Guide (Applicable up to Exploration Record No. 64)", "to": "Please say your goodbyes. Kindly!" }
+    {
+      "type": "lore",
+      "from": "Cheerful Theme Park User Guide (Applicable up to Exploration Record No. 64)",
+      "to": "Please say your goodbyes. Kindly!"
+    }
   ],
   "23": [
     { "type": "voice", "from": "B a d c h i l d", "to": "B a d c h i l d" },
+    { "type": "voice", "from": "B a d c h i l d", "to": "B a d c h i l d" },
     { "type": "voice", "from": "Y o u", "to": "Y o u" },
     { "type": "voice", "from": "I t i s y o u", "to": "I t i s y o u" },
-    { "type": "voice", "from": "Y o u a r e a g o o d c h i l d", "to": "Y o u a r e a g o o d c h i l d" },
+    {
+      "type": "voice",
+      "from": "Y o u a r e a g o o d c h i l d",
+      "to": "Y o u a r e a g o o d c h i l d"
+    },
     { "type": "voice", "from": "G o o d c h i l d r e n", "to": "G e t p r e s e n t s" },
-    { "type": "voice", "from": "L e t ’ s k e e p p l a y i n g", "to": "L e t ’ s k e e p p l a y i n g" }
+    {
+      "type": "voice",
+      "from": "L e t ’ s k e e p p l a y i n g",
+      "to": "L e t ’ s k e e p p l a y i n g"
+    }
   ],
   "24": [
     { "type": "voice", "from": "G O O D C H I L D", "to": "Y E S" },
@@ -39,43 +64,97 @@
     { "type": "voice", "from": "G O O D B O Y", "to": "G O O D B O Y" }
   ],
   "30": [
-    { "type": "chat", "from": "-This bastard's here again", "to": "-Occult geek, please come out of your own world view. What the hell is a Disaster Management Bureau Waveform" }
+    {
+      "type": "chat",
+      "from": "-This bastard's here again",
+      "to": "-Occult geek, please come out of your own world view. What the hell is a Disaster Management Bureau Waveform"
+    }
   ],
   "31": [
-    { "type": "note", "from": "We would like to express our gratitude to the customers who have purchased Snow White Apples.", "to": "※This orchard does not take responsibility for any changes that occur to the Body during Death-like Sleep." }
+    {
+      "type": "note",
+      "from": "We would like to express our gratitude to the customers who have purchased Snow White Apples.",
+      "to": "※This orchard does not take responsibility for any changes that occur to the Body during Death-like Sleep."
+    }
   ],
   "40": [
-    { "type": "scroll", "from": "Hello.", "to": "You are currently viewing the manual document summarizing the existing visitors to our exhibition." },
-    { "type": "scroll", "from": "Before reading the following content, we would like to inform you that you have been invited to a very wonderful exhibition.", "to": "Before reading the following content, we would like to inform you that you have been invited to a very wonderful exhibition." },
-    { "type": "scroll", "from": "To ensure your journey is not cumbersome, from now on, you will arrive at the exhibition no matter where you head.", "to": "To ensure your journey is not cumbersome, from now on, you will arrive at the exhibition no matter where you head." },
-    { "type": "scroll", "from": "We will guide you through the common reviews of nine visitors to this exhibition, tentatively collected by Daydream Inc.", "to": "Anyone can stop their viewing and exit whenever they wish." }
+    {
+      "type": "scroll",
+      "from": "Hello.",
+      "to": "You are currently viewing the manual document summarizing the existing visitors to our exhibition."
+    },
+    {
+      "type": "scroll",
+      "from": "Before reading the following content, we would like to inform you that you have been invited to a very wonderful exhibition.",
+      "to": "Before reading the following content, we would like to inform you that you have been invited to a very wonderful exhibition."
+    },
+    {
+      "type": "scroll",
+      "from": "To ensure your journey is not cumbersome, from now on, you will arrive at the exhibition no matter where you head.",
+      "to": "To ensure your journey is not cumbersome, from now on, you will arrive at the exhibition no matter where you head."
+    },
+    {
+      "type": "scroll",
+      "from": "We will guide you through the common reviews of nine visitors to this exhibition, tentatively collected by Daydream Inc.",
+      "to": "Anyone can stop their viewing and exit whenever they wish."
+    }
   ],
   "41": [
-    { "type": "scroll", "from": "This exhibition will be held free of charge for one hour, with an open heart that admires art.", "to": "This exhibition will be held free of charge for one hour, with an open heart that admires art." }
+    {
+      "type": "scroll",
+      "from": "This exhibition will be held free of charge for one hour, with an open heart that admires art.",
+      "to": "This exhibition will be held free of charge for one hour, with an open heart that admires art."
+    }
   ],
   "43": [
-    { "type": "scroll", "from": "This exhibition is held free of charge for one hour with an open heart that adores art.", "to": "This exhibition is held free of charge for one hour with an open heart that adores art." },
-    { "type": "voice", "from": "S T A R L I G H T T W I N K L E D E V E R Y W H E R E", "to": "F I L L I N G E V E R Y I N C H O F T H E S Q U A R E W A L L S A N D S T A R I N G A T M E H U M A N G A Z E S ...." }
+    {
+      "type": "scroll",
+      "from": "This exhibition is held free of charge for one hour with an open heart that adores art.",
+      "to": "This exhibition is held free of charge for one hour with an open heart that adores art."
+    },
+    {
+      "type": "voice",
+      "from": "S T A R L I G H T T W I N K L E D E V E R Y W H E R E",
+      "to": "F I L L I N G E V E R Y I N C H O F T H E S Q U A R E W A L L S A N D S T A R I N G A T M E H U M A N G A Z E S ...."
+    }
   ],
-  "52": [
-    { "type": "scroll", "from": "Pleasant mealtime", "to": "Bon appétit" }
-  ],
+  "52": [{ "type": "scroll", "from": "Pleasant mealtime", "to": "Bon appétit" }],
   "64": [
-    { "type": "voice", "from": "I t’ s a n e w t e a c h e r !", "to": "I t’ s a n e w t e a c h e r !" },
+    {
+      "type": "voice",
+      "from": "I t’ s a n e w t e a c h e r !",
+      "to": "I t’ s a n e w t e a c h e r !"
+    },
     { "type": "voice", "from": "B E T R A Y E R", "to": "B E T R A Y E R" },
     { "type": "voice", "from": "G o o d b y e !", "to": "G o o d b y e !" }
   ],
   "80": [
-    { "type": "note", "from": "I woke up after sleeping, so why am I at school? (Doodle of a surprised puppy) Preparing for the graduation ceremony? What do you mean, it’s only May?", "to": "I woke up after sleeping, so why am I at school? (Doodle of a surprised puppy) Preparing for the graduation ceremony? What do you mean, it’s only May?" }
+    {
+      "type": "note",
+      "from": "I woke up after sleeping, so why am I at school? (Doodle of a surprised puppy) Preparing for the graduation ceremony? What do you mean, it’s only May?",
+      "to": "I woke up after sleeping, so why am I at school? (Doodle of a surprised puppy) Preparing for the graduation ceremony? What do you mean, it’s only May?"
+    }
   ],
   "81": [
-    { "type": "note", "from": "<Graduation Ceremony in Progress>", "to": "Graduates only. Please knock before entering." }
+    {
+      "type": "note",
+      "from": "<Graduation Ceremony in Progress>",
+      "to": "Graduates only. Please knock before entering."
+    }
   ],
   "87": [
     { "type": "note", "from": "Qterw-C-1603", "to": "Security Clearance Completed [C]" },
-    { "type": "record", "from": "Confirmed an advertisement flyer for a new product launch in Qterw-C-1603.", "to": "Request confirmation of employees with similar mask shapes." }
+    {
+      "type": "record",
+      "from": "Confirmed an advertisement flyer for a new product launch in Qterw-C-1603.",
+      "to": "Request confirmation of employees with similar mask shapes."
+    }
   ],
   "93": [
-    { "type": "note", "from": "Please find this good child.", "to": "We are waiting for sightings." }
+    {
+      "type": "note",
+      "from": "Please find this good child.",
+      "to": "We are waiting for sightings."
+    }
   ]
 }

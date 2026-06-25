@@ -328,6 +328,40 @@ body {
 #editor strong {
   font-weight: 700;
 }
+#editor s {
+  text-decoration: line-through;
+}
+/* Imported colour roles + highlights (mirrors .cbody rules in main.css; palette in themes.css)
+   so pasted/edited colour & highlight render the same in the editor as in the reader. */
+#editor .c-muted {
+  color: var(--muted);
+}
+#editor .c-info {
+  color: var(--info);
+}
+#editor .c-warn {
+  color: var(--warn);
+}
+#editor .c-danger {
+  color: var(--danger);
+}
+#editor mark {
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 0.15em;
+}
+#editor mark.c-muted {
+  background: color-mix(in srgb, var(--muted) 22%, transparent);
+}
+#editor mark.c-info {
+  background: color-mix(in srgb, var(--info) 20%, transparent);
+}
+#editor mark.c-warn {
+  background: color-mix(in srgb, var(--warn) 24%, transparent);
+}
+#editor mark.c-danger {
+  background: color-mix(in srgb, var(--danger) 20%, transparent);
+}
 #editor h2 {
   font-size: 1.25rem;
   margin: 1.8em 0 0.6em;

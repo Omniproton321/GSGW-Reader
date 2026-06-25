@@ -18,17 +18,43 @@
 // Minimal entity decode so config anchors can be written with literal characters while the
 // chapter HTML stores them as entities (the gdoc importer emits &rsquo; &amp; etc.).
 const ENT = {
-  "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'", "&nbsp;": " ",
-  "&rsquo;": "’", "&lsquo;": "‘", "&ldquo;": "“", "&rdquo;": "”",
-  "&mdash;": "—", "&ndash;": "–", "&hellip;": "…",
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&quot;": '"',
+  "&#39;": "'",
+  "&nbsp;": " ",
+  "&rsquo;": "’",
+  "&lsquo;": "‘",
+  "&ldquo;": "“",
+  "&rdquo;": "”",
+  "&mdash;": "—",
+  "&ndash;": "–",
+  "&hellip;": "…",
   // Accented Latin letters the gdoc export emits as named entities (e.g. "Bon app&eacute;tit",
   // "d&eacute;j&agrave; vu") — decode so config anchors can be written with the real glyph.
-  "&eacute;": "é", "&egrave;": "è", "&ecirc;": "ê", "&euml;": "ë",
-  "&aacute;": "á", "&agrave;": "à", "&acirc;": "â", "&auml;": "ä", "&atilde;": "ã", "&aring;": "å",
-  "&iacute;": "í", "&icirc;": "î", "&iuml;": "ï",
-  "&oacute;": "ó", "&ocirc;": "ô", "&ouml;": "ö", "&otilde;": "õ",
-  "&uacute;": "ú", "&ucirc;": "û", "&uuml;": "ü",
-  "&ccedil;": "ç", "&ntilde;": "ñ",
+  "&eacute;": "é",
+  "&egrave;": "è",
+  "&ecirc;": "ê",
+  "&euml;": "ë",
+  "&aacute;": "á",
+  "&agrave;": "à",
+  "&acirc;": "â",
+  "&auml;": "ä",
+  "&atilde;": "ã",
+  "&aring;": "å",
+  "&iacute;": "í",
+  "&icirc;": "î",
+  "&iuml;": "ï",
+  "&oacute;": "ó",
+  "&ocirc;": "ô",
+  "&ouml;": "ö",
+  "&otilde;": "õ",
+  "&uacute;": "ú",
+  "&ucirc;": "û",
+  "&uuml;": "ü",
+  "&ccedil;": "ç",
+  "&ntilde;": "ñ",
 };
 
 const isP = (line) => /^<p[\s>]/.test(line);
@@ -36,7 +62,8 @@ const isP = (line) => /^<p[\s>]/.test(line);
 // Indices of paragraph lines whose plain text exactly equals `text`.
 function paraIdxsWithText(lines, text) {
   const out = [];
-  for (let i = 0; i < lines.length; i++) if (isP(lines[i]) && plainText(lines[i]) === text) out.push(i);
+  for (let i = 0; i < lines.length; i++)
+    if (isP(lines[i]) && plainText(lines[i]) === text) out.push(i);
   return out;
 }
 
@@ -71,7 +98,8 @@ function tagRange(lines, start, end, type) {
 }
 
 // Every class this module assigns — used to stop two detectors fighting over one paragraph.
-const TAGGED = /\sclass="[^"]*\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note|voice|scroll|record)\b/;
+const TAGGED =
+  /\sclass="[^"]*\b(?:idcard|lore|chat|sysmsg|card|terminal|options|panel|note|voice|scroll|record)\b/;
 const isTagged = (line) => TAGGED.test(line);
 
 // Tag each maximal run of >=minLen consecutive, not-already-tagged paragraphs that satisfy
@@ -84,7 +112,13 @@ function tagRuns(lines, matchFn, type, minLen = 2) {
       continue;
     }
     let j = i;
-    while (j + 1 < lines.length && isP(lines[j + 1]) && !isTagged(lines[j + 1]) && matchFn(lines[j + 1])) j++;
+    while (
+      j + 1 < lines.length &&
+      isP(lines[j + 1]) &&
+      !isTagged(lines[j + 1]) &&
+      matchFn(lines[j + 1])
+    )
+      j++;
     if (j - i + 1 >= minLen) tagRange(lines, i, j, type);
     i = j + 1;
   }
@@ -111,10 +145,7 @@ const isOptionLine = (line) => /^\d+\.\s/.test(plainText(line));
 const isGaugeLine = (line) => {
   const t = plainText(line);
   // bar chars: ∥ U+2225, ‖ U+2016, │ U+2502, | ; markers: ▲▼◀▶◆●○ ; plus dashes/equals.
-  return (
-    /^[∥‖│|▲▼◀▶◆●○─━\-=\s]+$/.test(t) &&
-    /[∥‖│▲▼◀▶─━=-]/.test(t)
-  );
+  return /^[∥‖│|▲▼◀▶◆●○─━\-=\s]+$/.test(t) && /[∥‖│▲▼◀▶─━=-]/.test(t);
 };
 
 // Return the html with enhancement classes applied. `blocks` is enhancements.json[chapterNum]
@@ -126,15 +157,23 @@ export function enhance(html, blocks = []) {
   // 1. Listed blocks, anchored by first/last paragraph plain text. Anchors needn't be unique
   //    (e.g. "[Daydream Inc.]" also appears in prose) — we pick the SMALLEST valid `from`→`to`
   //    span, which reliably selects the tight intended block over an accidental wide match.
+  //    Paragraphs already claimed by an earlier block are skipped, so a line that legitimately
+  //    repeats (e.g. the same one-line voice cry twice) can be tagged once per listed entry:
+  //    list the block N times to tag N occurrences, each taking the next unclaimed match.
+  const claimed = new Set();
   for (const blk of blocks || []) {
     const froms = paraIdxsWithText(lines, blk.from);
     const tos = paraIdxsWithText(lines, blk.to);
     let best = null;
     for (const f of froms) {
-      const t = tos.find((x) => x >= f);
+      if (claimed.has(f)) continue;
+      const t = tos.find((x) => x >= f && !claimed.has(x));
       if (t != null && (!best || t - f < best.end - best.start)) best = { start: f, end: t };
     }
-    if (best) tagRange(lines, best.start, best.end, blk.type);
+    if (best) {
+      tagRange(lines, best.start, best.end, blk.type);
+      for (let i = best.start; i <= best.end; i++) claimed.add(i);
+    }
   }
 
   // 2. Auto lore boxes: paragraphs bracketed by a PAIR of delimiter lines. The delimiter
@@ -220,6 +259,62 @@ export function enhance(html, blocks = []) {
     if ((prev >= 0 && isTagged(lines[prev])) || (next >= 0 && isTagged(lines[next]))) {
       lines[i] = addClass(lines[i], "boxedge");
     }
+  }
+
+  return lines.join("\n");
+}
+
+// Footnotes / TL notes. The source marks a reference inline as "[N]" and defines it at the
+// chapter bottom in a paragraph starting "[N]: …". Neither is a real hyperlink in the gdoc (the
+// editor just colours the "[N]" by hand), so we synthesise the jump links here at build time:
+// each inline marker becomes an anchor to its definition, the definition gets the matching target
+// id plus a ↩ back-link, and any bare URL in the definition (e.g. a "Source (https://…)") is made
+// clickable. Like enhance(), this only rewrites inline content — every paragraph stays a direct
+// `.cbody > p` child (the hard rule above), and the per-paragraph id stays on the <p> (the
+// footnote ids ride on inner <a> elements), so paragraph ids / comments are untouched.
+export function footnotes(html) {
+  const lines = html.split("\n");
+
+  // Definition paragraphs by footnote number: a <p> whose visible text starts "[N]:".
+  const defLine = new Map();
+  for (let i = 0; i < lines.length; i++) {
+    if (!isP(lines[i])) continue;
+    const m = plainText(lines[i]).match(/^\[(\d+)\]\s*:/);
+    if (m && !defLine.has(m[1])) defLine.set(m[1], i);
+  }
+  if (!defLine.size) return html;
+
+  for (const [num, di] of defLine) {
+    // The inline marker: the first OTHER paragraph whose visible text contains "[N]". A
+    // definition with no reference is left as plain text (no dangling links).
+    let mi = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (i === di || !isP(lines[i])) continue;
+      if (plainText(lines[i]).includes(`[${num}]`)) {
+        mi = i;
+        break;
+      }
+    }
+    if (mi < 0) continue;
+
+    // Marker -> link to the definition; drop the gdoc colour <span> wrapping it if present.
+    const marker = new RegExp(`(?:<span\\b[^>]*>)?\\[${num}\\](?:</span>)?`);
+    lines[mi] = lines[mi].replace(
+      marker,
+      `<a class="fnref" id="fnref-${num}" href="#fn-${num}">[${num}]</a>`,
+    );
+
+    // Definition: leading "[N]" -> jump target; linkify a bare URL; append a ↩ back-link.
+    lines[di] = lines[di]
+      .replace(`[${num}]`, `<a class="fn-num" id="fn-${num}" href="#fnref-${num}">[${num}]</a>`)
+      .replace(
+        /(https?:\/\/[^\s<"]+)/,
+        `<a class="fn-src" href="$1" target="_blank" rel="noopener noreferrer">$1</a>`,
+      )
+      .replace(
+        /<\/p>\s*$/,
+        ` <a class="fn-back" href="#fnref-${num}" aria-label="Back to text">↩</a></p>`,
+      );
   }
 
   return lines.join("\n");
