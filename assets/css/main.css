@@ -346,6 +346,45 @@ body.nav-open .ab-toggle .ico-close {
   background: color-mix(in srgb, var(--danger) 20%, transparent);
 }
 
+/* ---- imported display fonts (mapped from Google Docs font-families in gdocs.js FONT_ROLES).
+   Self-hosted woff2 (assets/fonts/); the build preloads only the faces a chapter actually uses
+   (see base.eta), and the browser fetches a face only when a .f-* span references it — so a
+   chapter using no special font downloads none. `swap` shows body text immediately, no FOIT.
+   Comic Sans (f-chat) is a system font, so it has no @font-face. */
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/assets/fonts/caveat.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Lobster";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/lobster.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Gloria Hallelujah";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/gloria-hallelujah.woff2") format("woff2");
+}
+.cbody .f-script {
+  font-family: "Caveat", cursive;
+}
+.cbody .f-display {
+  font-family: "Lobster", cursive;
+}
+.cbody .f-hand {
+  font-family: "Gloria Hallelujah", cursive;
+}
+.cbody .f-chat {
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+
 /* ---- footnotes / TL notes (build-time; see footnotes() in scripts/lib/enhance.mjs) ------
    Inline "[N]" markers link down to their "[N]:" definition at the chapter end and back. */
 .cbody .fnref,

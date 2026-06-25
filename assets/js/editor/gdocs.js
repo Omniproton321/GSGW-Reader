@@ -45,6 +45,28 @@ export function colorRole(color) {
   return color ? COLOR_ROLES[normColor(color)] || null : null;
 }
 
+// Deliberate display fonts we keep, mapped to a semantic class (rendered via .f-ROLE in
+// main.css, self-hosted webfont per role). A span's font-family -> <span class="f-ROLE">.
+// Any font not listed (the doc body font, web-safe defaults) is dropped — the importer
+// surfaces unmapped non-body fonts in its excluded-formatting report so they can be added.
+const FONT_ROLES = {
+  caveat: "script", // flowing cursive (handwritten-in-blood notes)
+  lobster: "display", // bold show-title script
+  "gloria hallelujah": "hand", // childlike printed handwriting
+  "comic sans ms": "chat", // casual chat / texting
+};
+// Normalise a CSS font-family value to a comparable key: first family, unquoted, lowercased.
+function normFont(family) {
+  return family
+    .split(",")[0]
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .toLowerCase();
+}
+export function fontRole(family) {
+  return family ? FONT_ROLES[normFont(family)] || null : null;
+}
+
 // Pull the emphasis we preserve out of a style="" attribute value.
 function emphasisFromStyle(style) {
   const out = {
@@ -54,6 +76,7 @@ function emphasisFromStyle(style) {
     color: null,
     highlight: null,
     sizeEm: null,
+    font: null,
   };
   if (!style) return out;
   const decls = {};
@@ -74,6 +97,7 @@ function emphasisFromStyle(style) {
   }
   if (decls["color"]) out.color = colorRole(decls["color"]);
   if (decls["background-color"]) out.highlight = colorRole(decls["background-color"]);
+  if (decls["font-family"]) out.font = fontRole(decls["font-family"]);
   const fs = decls["font-size"];
   if (fs) {
     let m;
@@ -92,9 +116,10 @@ function emphasisFromStyle(style) {
 // Wrap inner HTML in the canonical emphasis tags. Order (innermost out): font-size span,
 // colour-role span, <mark> highlight, <s>, <em>, <strong>. Shared so the editor paste path and
 // the importer emit byte-identical markup.
-export function wrapEmphasis({ bold, italic, strike, color, highlight, sizeEm }, inner) {
+export function wrapEmphasis({ bold, italic, strike, color, highlight, sizeEm, font }, inner) {
   let out = inner;
   if (sizeEm) out = `<span style="font-size:${sizeEm}">${out}</span>`;
+  if (font) out = `<span class="f-${font}">${out}</span>`;
   if (color) out = `<span class="c-${color}">${out}</span>`;
   if (highlight) out = `<mark class="c-${highlight}">${out}</mark>`;
   if (strike) out = `<s>${out}</s>`;
