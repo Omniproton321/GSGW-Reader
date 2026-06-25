@@ -372,14 +372,19 @@ body.nav-open .ab-toggle .ico-close {
   font-display: swap;
   src: url("/assets/fonts/gloria-hallelujah.woff2") format("woff2");
 }
+/* These are display/script typefaces with their own built-in character; render them upright
+   (font-style: normal) so an enclosing `note` box's italic doesn't synthesise a faux-oblique. */
 .cbody .f-script {
   font-family: "Caveat", cursive;
+  font-style: normal;
 }
 .cbody .f-display {
   font-family: "Lobster", cursive;
+  font-style: normal;
 }
 .cbody .f-hand {
   font-family: "Gloria Hallelujah", cursive;
+  font-style: normal;
 }
 .cbody .f-chat {
   font-family: "Comic Sans MS", "Comic Sans", cursive;
