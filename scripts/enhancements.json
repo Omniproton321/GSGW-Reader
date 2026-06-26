@@ -137,6 +137,34 @@
     { "type": "note", "from": "Mr. Kim Soleum", "to": ":)" },
     { "type": "note", "from": "Quiz Show Application Form", "to": "From :" }
   ],
+  "129": [
+    { "type": "note", "from": "**Closed today ^^ **", "to": "(Please take the Doorplate back with you!)" }
+  ],
+  "136": [
+    { "type": "record", "from": "/Start of Recording", "to": "The Agent’s recorder was later found in the electronics department on the 3rd floor of Lookie Mart." }
+  ],
+  "147": [
+    { "type": "note", "from": "Look here", "to": "that empathizes and notices" }
+  ],
+  "148": [
+    { "type": "record", "from": "Assistant Manager ■■■: Yes! I found it. That machine, it’s old, but it looked like it could still function normally. There seemed to be Dream Essence Liquid and certain secret information related to the Darkness as well. Fearing it might fall into the hands of outsiders, I quickly… Yes?", "to": "Assistant Manager ■■■: ……That facility doesn't belong to our company? …Don't tell me it looked like that not because it was contaminated by the Darkness, but because the company…… W-Wait. Why are you holding that and coming toward me…." },
+    { "type": "idcard", "from": "Cheerful Researcher", "to": "■■■" },
+    { "type": "idcard", "from": "Children's Detective Syrup", "to": "★★★" }
+  ],
+  "151": [
+    { "type": "idcard", "from": "Cheerful Researcher", "to": "■■■" }
+  ],
+  "154": [
+    { "type": "sysmsg", "from": "[Welcome", "to": "New Resident!]" },
+    { "type": "sysmsg", "from": "[Children,", "to": "some honey!]" }
+  ],
+  "155": [
+    { "type": "note", "from": "For Children", "to": "Dreamland Bed" },
+    { "type": "note", "from": "Children,", "to": "Come get some honey!" }
+  ],
+  "158": [
+    { "type": "idcard", "from": "Necronomicon", "to": "Easy Korean Revised Edition Released!" }
+  ],
   "162": [
     { "type": "idcard", "from": "Children's Surprise Syrup", "to": "★★★★" }
   ],
