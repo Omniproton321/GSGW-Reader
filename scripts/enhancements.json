@@ -119,16 +119,26 @@
     }
   ],
   "103": [
-    { "type": "note", "from": "Disciplinary Notice", "to": "This disciplinary measure is intended to improve the individual's work attitude. Please ensure that similar incidents do not occur in the future." }
+    {
+      "type": "note",
+      "from": "Disciplinary Notice",
+      "to": "This disciplinary measure is intended to improve the individual's work attitude. Please ensure that similar incidents do not occur in the future."
+    }
   ],
   "104": [
-    { "type": "note", "from": "Night Cleaning Duty Tips", "to": "But don't worry too much. If you just read these sweet tips I’ve written down, you’ll be able to finish and get out without much trouble." }
+    {
+      "type": "note",
+      "from": "Night Cleaning Duty Tips",
+      "to": "But don't worry too much. If you just read these sweet tips I’ve written down, you’ll be able to finish and get out without much trouble."
+    }
   ],
-  "108": [
-    { "type": "record", "from": "Imitator Scripture Section 4", "to": "Story Snatcher" }
-  ],
+  "108": [{ "type": "record", "from": "Imitator Scripture Section 4", "to": "Story Snatcher" }],
   "111": [
-    { "type": "record", "from": "The Paradise Test (tentative name) is a phenomenon that occurs very rarely on the Iksan-bound high-speed railway departing from Seoul.", "to": "No casualties to date. Disaster classification pending." }
+    {
+      "type": "record",
+      "from": "The Paradise Test (tentative name) is a phenomenon that occurs very rarely on the Iksan-bound high-speed railway departing from Seoul.",
+      "to": "No casualties to date. Disaster classification pending."
+    }
   ],
   "116": [
     { "type": "note", "from": "Let’sEndureJustSevenTimes", "to": "Let’sEndureJustSevenTimes" }
@@ -138,22 +148,30 @@
     { "type": "note", "from": "Quiz Show Application Form", "to": "From :" }
   ],
   "129": [
-    { "type": "note", "from": "**Closed today ^^ **", "to": "(Please take the Doorplate back with you!)" }
+    {
+      "type": "note",
+      "from": "**Closed today ^^ **",
+      "to": "(Please take the Doorplate back with you!)"
+    }
   ],
   "136": [
-    { "type": "record", "from": "/Start of Recording", "to": "The Agent’s recorder was later found in the electronics department on the 3rd floor of Lookie Mart." }
+    {
+      "type": "record",
+      "from": "/Start of Recording",
+      "to": "The Agent’s recorder was later found in the electronics department on the 3rd floor of Lookie Mart."
+    }
   ],
-  "147": [
-    { "type": "note", "from": "Look here", "to": "that empathizes and notices" }
-  ],
+  "147": [{ "type": "note", "from": "Look here", "to": "that empathizes and notices" }],
   "148": [
-    { "type": "record", "from": "Assistant Manager ■■■: Yes! I found it. That machine, it’s old, but it looked like it could still function normally. There seemed to be Dream Essence Liquid and certain secret information related to the Darkness as well. Fearing it might fall into the hands of outsiders, I quickly… Yes?", "to": "Assistant Manager ■■■: ……That facility doesn't belong to our company? …Don't tell me it looked like that not because it was contaminated by the Darkness, but because the company…… W-Wait. Why are you holding that and coming toward me…." },
+    {
+      "type": "record",
+      "from": "Assistant Manager ■■■: Yes! I found it. That machine, it’s old, but it looked like it could still function normally. There seemed to be Dream Essence Liquid and certain secret information related to the Darkness as well. Fearing it might fall into the hands of outsiders, I quickly… Yes?",
+      "to": "Assistant Manager ■■■: ……That facility doesn't belong to our company? …Don't tell me it looked like that not because it was contaminated by the Darkness, but because the company…… W-Wait. Why are you holding that and coming toward me…."
+    },
     { "type": "idcard", "from": "Cheerful Researcher", "to": "■■■" },
     { "type": "idcard", "from": "Children's Detective Syrup", "to": "★★★" }
   ],
-  "151": [
-    { "type": "idcard", "from": "Cheerful Researcher", "to": "■■■" }
-  ],
+  "151": [{ "type": "idcard", "from": "Cheerful Researcher", "to": "■■■" }],
   "154": [
     { "type": "sysmsg", "from": "[Welcome", "to": "New Resident!]" },
     { "type": "sysmsg", "from": "[Children,", "to": "some honey!]" }
@@ -165,53 +183,85 @@
   "158": [
     { "type": "idcard", "from": "Necronomicon", "to": "Easy Korean Revised Edition Released!" }
   ],
-  "162": [
-    { "type": "idcard", "from": "Children's Surprise Syrup", "to": "★★★★" }
-  ],
+  "162": [{ "type": "idcard", "from": "Children's Surprise Syrup", "to": "★★★★" }],
   "165": [
-    { "type": "note", "from": "-Hongrim Unni, I really, really love you", "to": "-The great leader, our Team Leader" }
+    {
+      "type": "note",
+      "from": "-Hongrim Unni, I really, really love you",
+      "to": "-The great leader, our Team Leader"
+    }
   ],
   "166": [
-    { "type": "idcard", "from": "I am a Cosmic shopping mall VIP!", "to": "~Gratitude Cell included~" },
-    { "type": "chat", "from": "-Is it okay to leave the Swamp Music Box alone when it’s not working?", "to": "-Recommend something for lunch." }
+    {
+      "type": "idcard",
+      "from": "I am a Cosmic shopping mall VIP!",
+      "to": "~Gratitude Cell included~"
+    },
+    {
+      "type": "chat",
+      "from": "-Is it okay to leave the Swamp Music Box alone when it’s not working?",
+      "to": "-Recommend something for lunch."
+    }
   ],
-  "168": [
-    { "type": "chat", "from": "-Congrats congrats.", "to": "-Good job everyone~" }
-  ],
+  "168": [{ "type": "chat", "from": "-Congrats congrats.", "to": "-Good job everyone~" }],
   "169": [
-    { "type": "chat", "from": "-The King of Destruction rookie is adjusting smoothly ^^", "to": "-You’re in this chatroom too now, right?" }
+    {
+      "type": "chat",
+      "from": "-The King of Destruction rookie is adjusting smoothly ^^",
+      "to": "-You’re in this chatroom too now, right?"
+    }
   ],
   "172": [
-    { "type": "note", "from": "< Flower Golden Resort is a space for happiness. Please refrain from anything that makes other guests or staff uncomfortable.", "to": "The standard of happiness is determined by the Mascot. >" }
+    {
+      "type": "note",
+      "from": "< Flower Golden Resort is a space for happiness. Please refrain from anything that makes other guests or staff uncomfortable.",
+      "to": "The standard of happiness is determined by the Mascot. >"
+    }
   ],
   "173": [
-    { "type": "note", "from": "Notice for Guest Lizard", "to": "We hope you enjoy all the cheerfulness of this resort." }
+    {
+      "type": "note",
+      "from": "Information Guide for Guest Lizard",
+      "to": "We hope you enjoy all the cheerfulness of this resort."
+    }
   ],
-  "175": [
-    { "type": "note", "from": "What should we do", "to": "Sob sob sob sob sob" }
-  ],
+  "175": [{ "type": "note", "from": "what to do", "to": "Boohoohoohoohoo" }],
   "176": [
-    { "type": "note", "from": "<Requirements for Resort facility expansion>", "to": "Mascot Ceremony Ritual" }
+    {
+      "type": "note",
+      "from": "Requirements for Resort facility expansion",
+      "to": "Mascot Ceremony Rites"
+    }
   ],
   "178": [
-    { "type": "note", "from": "Come see Flower Golden", "to": "in ■■!" }
+    {
+      "type": "note",
+      "from": "Come see Flower Golden",
+      "to": "The most beautiful illumination in ■■!"
+    }
   ],
-  "179": [
-    { "type": "note", "from": "Prize Event", "to": "3rd Prize: The Great Magic Bunny" }
-  ],
-  "184": [
-    { "type": "options", "from": "Free Choice", "to": "▶Go down" }
-  ],
-  "185": [
-    { "type": "options", "from": "Your choice", "to": "▶ Stay" }
-  ],
+  "179": [{ "type": "note", "from": "Prize Event", "to": "3rd Prize: The Great Magic Bunny" }],
+  "184": [{ "type": "options", "from": "Free Choice", "to": "▶Go down" }],
+  "185": [{ "type": "options", "from": "Your choice", "to": "▶ Stay" }],
   "186": [
-    { "type": "note", "from": "Exploration Results:", "to": "Additional Special Note 2) Many of the exploration staff who returned on the 6th day testified to working as theme park employees. They claimed to have received items from the gift shop as wages." }
+    {
+      "type": "note",
+      "from": "Exploration Results:",
+      "to": "Additional Special Note 2) Many of the exploration staff who returned on the 6th day testified to working as theme park employees. They claimed to have received items from the gift shop as wages."
+    }
   ],
   "188": [
-    { "type": "record", "from": "Mimic Scripture Verse 4", "to": "The item that appeared when the Sergeant defeated the Imitator I encountered while cleaning in the company basement after receiving disciplinary action." }
+    {
+      "type": "record",
+      "from": "Mimic Scripture Verse 4",
+      "to": "The item that appeared when the Sergeant defeated the Imitator I encountered while cleaning in the company basement after receiving disciplinary action."
+    }
   ],
   "190": [
-    { "type": "chat", "from": "[Don't say anything unnecessary even if the King of Destruction rookie carries a doll keychain, it's a precious friend.]", "to": "[I'm the person who asked today if a younger sibling gave him that doll. If you're reading this, I'm sorry. Agent. ㅠㅠ]" }
+    {
+      "type": "chat",
+      "from": "[Don't say anything unnecessary even if the King of Destruction rookie carries a doll keychain, it's a precious friend.]",
+      "to": "[I'm the person who asked today if a younger sibling gave him that doll. If you're reading this, I'm sorry. Agent. ㅠㅠ]"
+    }
   ]
 }

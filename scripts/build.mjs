@@ -48,6 +48,8 @@ const FONT_PRELOAD = {
   script: "/assets/fonts/caveat.woff2",
   display: "/assets/fonts/lobster.woff2",
   hand: "/assets/fonts/gloria-hallelujah.woff2",
+  notice: "/assets/fonts/merriweather.woff2",
+  title: "/assets/fonts/spectral.woff2",
 };
 function fontPreloads(bodyHtml) {
   const roles = new Set([...bodyHtml.matchAll(/class="[^"]*\bf-([a-z]+)\b/g)].map((m) => m[1]));

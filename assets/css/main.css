@@ -328,6 +328,9 @@ body.nav-open .ab-toggle .ico-close {
 .cbody .c-danger {
   color: var(--danger);
 }
+.cbody .c-sign {
+  color: var(--sign);
+}
 .cbody mark {
   color: inherit;
   border-radius: 3px;
@@ -344,6 +347,9 @@ body.nav-open .ab-toggle .ico-close {
 }
 .cbody mark.c-danger {
   background: color-mix(in srgb, var(--danger) 20%, transparent);
+}
+.cbody mark.c-sign {
+  background: color-mix(in srgb, var(--sign) 24%, transparent);
 }
 
 /* ---- imported display fonts (mapped from Google Docs font-families in gdocs.js FONT_ROLES).
@@ -372,6 +378,29 @@ body.nav-open .ab-toggle .ico-close {
   font-display: swap;
   src: url("/assets/fonts/gloria-hallelujah.woff2") format("woff2");
 }
+/* Merriweather is a real reading serif (variable weight) used for in-world formal notices; it's
+   also used italic in the source, so it ships a true italic face rather than a synthesised oblique. */
+@font-face {
+  font-family: "Merriweather";
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url("/assets/fonts/merriweather.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Merriweather";
+  font-style: italic;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url("/assets/fonts/merriweather-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Spectral";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/spectral.woff2") format("woff2");
+}
 /* These are display/script typefaces with their own built-in character; render them upright
    (font-style: normal) so an enclosing `note` box's italic doesn't synthesise a faux-oblique. */
 .cbody .f-script {
@@ -388,6 +417,17 @@ body.nav-open .ab-toggle .ico-close {
 }
 .cbody .f-chat {
   font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+/* Reading serif — keeps its real italic/bold (no font-style override), so the notice's
+   <em>/<strong> render as true Merriweather italic/bold. */
+.cbody .f-notice {
+  font-family: "Merriweather", Georgia, serif;
+}
+/* Applied to ch171's title span (font-family from the source doc). The title's letters are
+   Mathematical Bold Script Unicode that Spectral has no glyphs for (they fall back to a system
+   math font); Spectral styles the ASCII characters in the span (brackets, spaces). */
+.cbody .f-title {
+  font-family: "Spectral", Georgia, serif;
 }
 
 /* ---- footnotes / TL notes (build-time; see footnotes() in scripts/lib/enhance.mjs) ------

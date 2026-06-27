@@ -345,6 +345,9 @@ body {
 #editor .c-danger {
   color: var(--danger);
 }
+#editor .c-sign {
+  color: var(--sign);
+}
 #editor mark {
   color: inherit;
   border-radius: 3px;
@@ -361,6 +364,9 @@ body {
 }
 #editor mark.c-danger {
   background: color-mix(in srgb, var(--danger) 20%, transparent);
+}
+#editor mark.c-sign {
+  background: color-mix(in srgb, var(--sign) 24%, transparent);
 }
 #editor h2 {
   font-size: 1.25rem;
