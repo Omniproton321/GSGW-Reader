@@ -37,6 +37,7 @@ const COLOR_ROLES = {
   "#ff0000": "danger",
   "#e06666": "danger",
   "#cc0000": "danger",
+  "#990000": "danger",
   "#4a86e8": "info",
   "#1155cc": "info",
   "#3d85c6": "info",

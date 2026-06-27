@@ -241,8 +241,8 @@
     }
   ],
   "179": [{ "type": "note", "from": "Prize Event", "to": "3rd Prize: The Great Magic Bunny" }],
-  "184": [{ "type": "options", "from": "Free Choice", "to": "▶Go down" }],
-  "185": [{ "type": "options", "from": "Your choice", "to": "▶ Stay" }],
+  "184": [{ "type": "options", "from": ">Free Choice", "to": "▶Go down" }],
+  "185": [{ "type": "options", "from": ">Your choice", "to": "▶ Stay" }],
   "186": [
     {
       "type": "note",
