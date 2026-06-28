@@ -2,7 +2,7 @@
 // site's canonical HTML (one <p>/<hr class="sb"> per line, <strong>/<em>, source entities).
 import { state } from "./state.js";
 import { updateStatus } from "./ui.js";
-import { cleanInline } from "./gdocs.js";
+import { cleanInline, dominantFamily } from "./gdocs.js";
 
 function restoreRange() {
   if (state.lastEditorRange) {
@@ -188,6 +188,11 @@ export function normalizeOutput(rawHtml) {
   // "Empty" = no content once ASCII whitespace is removed; nbsp counts as content.
   const isEmpty = (s) => s.replace(/[ \t\r\n]+/g, "").length === 0;
 
+  // Body font over the WHOLE fragment so a deliberate display font is kept while the document
+  // body font is dropped — computed once, not per block (a block that is entirely one display
+  // font would otherwise look like its own "body" font and be stripped).
+  const bodyFont = dominantFamily(temp.innerHTML);
+
   const out = [];
   for (const node of temp.childNodes) {
     if (node.nodeType === Node.ELEMENT_NODE) {
@@ -196,10 +201,10 @@ export function normalizeOutput(rawHtml) {
         continue;
       }
       if (isEmpty(node.textContent)) continue; // drop only truly-empty blocks
-      // cleanInline strips pasted Google Docs styling (font-family, 12pt sizes, #000000,
-      // docs-internal-guid <b> wrappers) down to the same canonical inline markup the
-      // importer produces, while keeping real color/em-size/bold/italic emphasis.
-      const inner = asciiTrim(cleanInline(node.innerHTML));
+      // cleanInline strips pasted Google Docs noise (the body font, 12pt sizes, #000000,
+      // docs-internal-guid <b> wrappers) down to the same canonical inline markup the importer
+      // produces, while keeping real color/em-size/bold/italic/underline/display-font emphasis.
+      const inner = asciiTrim(cleanInline(node.innerHTML, bodyFont));
       // Alignment lives in a class for editor-made paragraphs; a paste may carry it as an
       // inline text-align style instead, so fall back to that.
       const ta = (node.style && node.style.textAlign) || "";

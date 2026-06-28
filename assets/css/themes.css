@@ -61,3 +61,27 @@
   --card: #fffdfe;
   --border: #e7d8ee;
 }
+
+/* Semantic inline-colour roles for imported chapter text colours / highlights (mapped from the
+   Google Docs palette in assets/js/editor/gdocs.js; applied as .c-info/.c-warn/.c-danger and
+   mark.c-* in main.css). The `muted` role reuses each theme's existing --muted. Defaults below
+   suit the dark themes; the two light themes override. Equal specificity to :root, so these must
+   stay AFTER the :root defaults in source order. */
+:root {
+  --info: #6f9bff;
+  --warn: #e3b341;
+  --danger: #ff6b6b;
+  --sign: #f1c232;
+}
+[data-theme="office"] {
+  --info: #2f5bd0;
+  --warn: #9a7400;
+  --danger: #d23b3b;
+  --sign: #a07700;
+}
+[data-theme="daydream"] {
+  --info: #5566c0;
+  --warn: #957510;
+  --danger: #c2476b;
+  --sign: #9c7a14;
+}

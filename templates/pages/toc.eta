@@ -5,7 +5,7 @@
     <input type="search" id="toc-search" placeholder="Search chapters…" autocomplete="off">
     <button id="toc-sort" data-dir="asc">Sort: Oldest first</button>
   </div>
-  <ul class="chlist"><% it.chapters.forEach(function (c) { %><li data-num="<%~ c.numEsc %>" data-title="<%~ c.titleLowerEsc %>"><a href="/chapters/<%= c.slug %>.html"><%~ c.titleEsc %></a></li><% }) %></ul>
+  <ul class="chlist"<% if (it.countsApi) { %> data-counts-api="<%= it.countsApi %>"<% } %>><% it.chapters.forEach(function (c) { %><li data-num="<%~ c.numEsc %>" data-title="<%~ c.titleLowerEsc %>" data-slug="<%= c.slug %>"><a href="/chapters/<%= c.slug %>.html"><%~ c.titleEsc %></a></li><% }) %></ul>
   <p class="back"><a href="/parts.html">← Back to parts</a></p>
 </main>
 <%~ include("../partials/actionbar", { chapters: false, comments: false, themes: it.themes }) %>

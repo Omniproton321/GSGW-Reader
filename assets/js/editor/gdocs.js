@@ -4,30 +4,141 @@
 // so content pasted from Google Docs into the editor ends up byte-identical to content
 // pulled by the importer. Pure string/regex (no DOM) so it runs in the browser AND in Node.
 //
-// What we KEEP from a run of text: italic -> <em>, bold -> <strong>, a non-default text
-// color, and a *large* font size (emphasis headings) expressed as relative em. Everything
-// else Google Docs emits — font-family, background-color, font-weight:400, white-space,
-// vertical-align, the docs-internal-guid <b> wrappers, color:#000000 (the default body
-// black that would be invisible in dark themes) — is dropped so the reader's theme wins.
+// What we KEEP from a run of text: italic -> <em>, bold -> <strong>, underline -> <u>,
+// strikethrough -> <s>, a recognised text colour / highlight (mapped to a theme-aware role
+// class — see colorRole), a deliberate font (a render role -> <span class="f-ROLE">, otherwise
+// the family inline), and a *large* font size (emphasis headings) expressed as relative em.
+// Everything else Google Docs emits — font-weight:400, white-space, vertical-align, the
+// docs-internal-guid <b> wrappers, the document body font, and any unmapped colour (incl. the
+// default body black that would be invisible in dark themes) — is dropped so the reader's theme wins.
 
 export const SIZE_EMPHASIS_PT = 16; // only sizes >= this are kept (as relative em); body 12pt is dropped
 
-const DEFAULT_COLORS = new Set(["#000", "#000000", "black", "rgb(0,0,0)"]);
-
-// Normalise a CSS color to a comparable lowercase form; rgb(r,g,b) -> #rrggbb.
+// Normalise a CSS colour to a comparable lowercase form; rgb(r,g,b) -> #rrggbb.
 function normColor(c) {
   c = c.trim().toLowerCase();
   const m = c.match(/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/);
-  if (m) return "#" + m.slice(1, 4).map((n) => (+n).toString(16).padStart(2, "0")).join("");
+  if (m)
+    return (
+      "#" +
+      m
+        .slice(1, 4)
+        .map((n) => (+n).toString(16).padStart(2, "0"))
+        .join("")
+    );
   return c;
 }
-function isDefaultColor(c) {
-  return DEFAULT_COLORS.has(c.replace(/\s+/g, ""));
+
+// Google Docs palette colours we keep, mapped to theme-aware semantic roles (palette in
+// themes.css, applied in main.css). Text colour -> <span class="c-ROLE">; a highlight
+// (background-colour) -> <mark class="c-ROLE">. Any colour not listed here is dropped — the
+// importer surfaces unmapped colours in its excluded-formatting report so they can be added.
+const COLOR_ROLES = {
+  "#ff0000": "danger",
+  "#e06666": "danger",
+  "#cc0000": "danger",
+  "#990000": "danger",
+  "#4a86e8": "info",
+  "#1155cc": "info",
+  "#3d85c6": "info",
+  "#3c78d8": "info",
+  "#666666": "muted",
+  "#999999": "muted",
+  "#bf9000": "warn",
+  "#f1c232": "sign", // bright resort-signage gold (spaced-out Mascot announcements)
+};
+export function colorRole(color) {
+  return color ? COLOR_ROLES[normColor(color)] || null : null;
 }
 
-// Pull the emphasis we preserve out of a style="" attribute value.
-function emphasisFromStyle(style) {
-  const out = { bold: false, italic: false, color: null, sizeEm: null };
+// Deliberate display fonts we keep, mapped to a semantic class (rendered via .f-ROLE in
+// main.css, self-hosted webfont per role). A span's font-family -> <span class="f-ROLE">.
+// Any font not listed (the doc body font, web-safe defaults) is dropped — the importer
+// surfaces unmapped non-body fonts in its excluded-formatting report so they can be added.
+const FONT_ROLES = {
+  caveat: "script", // flowing cursive (handwritten-in-blood notes)
+  lobster: "display", // bold show-title script
+  "gloria hallelujah": "hand", // childlike printed handwriting
+  "comic sans ms": "chat", // casual chat / texting
+  merriweather: "notice", // refined serif for in-world formal notices / guest guides
+  spectral: "title", // serif applied to an in-world title in the source doc (ch171)
+};
+// Normalise a CSS font-family value to a comparable key: first family, unquoted, lowercased.
+function normFont(family) {
+  return family
+    .split(",")[0]
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .toLowerCase();
+}
+export function fontRole(family) {
+  return family ? FONT_ROLES[normFont(family)] || null : null;
+}
+
+// Web-safe body fonts Google Docs offers as defaults — low signal, like #000/#fff for colour.
+// A deviation to one of these (vs the doc body font) isn't a deliberate display choice, so it's
+// dropped, not preserved.
+export const PLAIN_FONTS = new Set([
+  "arial",
+  "times new roman",
+  "calibri",
+  "verdana",
+  "georgia",
+  "roboto",
+]);
+// First family of a font-family value, unquoted/trimmed, original casing kept (for output).
+export function firstFamily(value) {
+  return value
+    ? value
+        .split(",")[0]
+        .trim()
+        .replace(/^["']|["']$/g, "")
+    : "";
+}
+// The font-family to PRESERVE inline for a span, or "" to drop it. We keep any deliberate font
+// that isn't a web-safe default and isn't the document body font (which the reader's theme font
+// replaces). Fonts that map to a render role are emitted as a class instead — see wrapEmphasis.
+export function keepFamily(family, bodyFont) {
+  const fam = firstFamily(family);
+  if (!fam) return "";
+  if (PLAIN_FONTS.has(fam.toLowerCase())) return "";
+  if (bodyFont && fam.toLowerCase() === firstFamily(bodyFont).toLowerCase()) return "";
+  return fam;
+}
+// The dominant inline font-family across a fragment (its body font): the family covering the
+// most span text. Lets us keep a deliberate display font while dropping the body font. (The
+// importer derives its body font from Docs <style> classes instead — see dominantFont there.)
+export function dominantFamily(html) {
+  html = html || "";
+  const weight = new Map();
+  for (const m of html.matchAll(/<span\b([^>]*)>([\s\S]*?)<\/span>/g)) {
+    const style = (m[1].match(/style\s*=\s*"([^"]*)"/i) || [])[1] || "";
+    const fam = firstFamily((style.match(/font-family\s*:\s*([^;]+)/i) || [])[1] || "");
+    if (fam) weight.set(fam, (weight.get(fam) || 0) + m[2].replace(/<[^>]+>/g, "").length);
+  }
+  let best = null;
+  for (const [fam, w] of weight) if (!best || w > best.w) best = { fam, w };
+  // Only a font covering MOST of the fragment's text is the body font. In already-cleaned content
+  // (bare body text + a few deliberate-font spans) no font reaches a majority, so nothing is
+  // treated as body and the deliberate fonts survive re-normalization (idempotent).
+  const total = html.replace(/<[^>]+>/g, "").length;
+  return best && best.w * 2 >= total ? best.fam : null;
+}
+
+// Pull the emphasis we preserve out of a style="" attribute value. `bodyFont` is the fragment's
+// dominant font, so a span carrying it (the body font) isn't kept as a deliberate display font.
+function emphasisFromStyle(style, bodyFont) {
+  const out = {
+    bold: false,
+    italic: false,
+    underline: false,
+    strike: false,
+    color: null,
+    highlight: null,
+    sizeEm: null,
+    font: null,
+    fontFamily: "",
+  };
   if (!style) return out;
   const decls = {};
   for (const d of style.split(";")) {
@@ -40,9 +151,15 @@ function emphasisFromStyle(style) {
     out.bold = w === "bold" || parseInt(w, 10) >= 600;
   }
   if (decls["font-style"]) out.italic = /italic|oblique/.test(decls["font-style"]);
-  if (decls["color"]) {
-    const c = normColor(decls["color"]);
-    if (!isDefaultColor(c)) out.color = c;
+  // Docs may combine decorations (e.g. "underline line-through"), so match each token anywhere.
+  const deco = decls["text-decoration-line"] || decls["text-decoration"] || "";
+  if (/line-through/.test(deco)) out.strike = true;
+  if (/underline/.test(deco)) out.underline = true;
+  if (decls["color"]) out.color = colorRole(decls["color"]);
+  if (decls["background-color"]) out.highlight = colorRole(decls["background-color"]);
+  if (decls["font-family"]) {
+    out.font = fontRole(decls["font-family"]);
+    if (!out.font) out.fontFamily = keepFamily(decls["font-family"], bodyFont);
   }
   const fs = decls["font-size"];
   if (fs) {
@@ -59,14 +176,21 @@ function emphasisFromStyle(style) {
   return out;
 }
 
-// Wrap inner HTML in the canonical emphasis tags. Order matches import-gdoc:
-// <strong><em><span style="color:…;font-size:…em">…</span></em></strong>.
-export function wrapEmphasis({ bold, italic, color, sizeEm }, inner) {
-  const decl = [];
-  if (color) decl.push(`color:${color}`);
-  if (sizeEm) decl.push(`font-size:${sizeEm}`);
+// Wrap inner HTML in the canonical emphasis tags. Order (innermost out): font-size span, font
+// (role class or inline family) span, colour-role span, <mark> highlight, <s>, <u>, <em>,
+// <strong>. Shared so the editor paste path and the importer emit byte-identical markup.
+export function wrapEmphasis(
+  { bold, italic, underline, strike, color, highlight, sizeEm, font, fontFamily },
+  inner,
+) {
   let out = inner;
-  if (decl.length) out = `<span style="${decl.join(";")}">${out}</span>`;
+  if (sizeEm) out = `<span style="font-size:${sizeEm}">${out}</span>`;
+  if (font) out = `<span class="f-${font}">${out}</span>`;
+  else if (fontFamily) out = `<span style="font-family:${fontFamily}">${out}</span>`;
+  if (color) out = `<span class="c-${color}">${out}</span>`;
+  if (highlight) out = `<mark class="c-${highlight}">${out}</mark>`;
+  if (strike) out = `<s>${out}</s>`;
+  if (underline) out = `<u>${out}</u>`;
   if (italic) out = `<em>${out}</em>`;
   if (bold) out = `<strong>${out}</strong>`;
   return out;
@@ -122,20 +246,22 @@ function parseInline(html) {
   return children();
 }
 
-function serialize(nodes) {
+function serialize(nodes, bodyFont) {
   let out = "";
   for (const n of nodes) {
     if (n.text != null) {
       out += n.text; // text slices keep their source entities verbatim
       continue;
     }
-    const inner = serialize(n.children);
+    const inner = serialize(n.children, bodyFont);
     if (!inner) continue; // drop empty wrappers
     const style = (n.attrs.match(/style\s*=\s*"([^"]*)"/i) || [])[1] || "";
-    const emp = emphasisFromStyle(style);
+    const emp = emphasisFromStyle(style, bodyFont);
     // A <b>/<strong> is bold unless it explicitly carries font-weight:normal (Docs' wrapper trick).
     if (n.name === "b" || n.name === "strong") emp.bold = !/font-weight\s*:\s*normal/i.test(style);
     if (n.name === "i" || n.name === "em") emp.italic = true;
+    if (n.name === "u") emp.underline = true;
+    if (n.name === "s" || n.name === "strike" || n.name === "del") emp.strike = true;
     // span / a / font / unknown inline tags contribute only their style-based emphasis,
     // so links and Docs noise spans get unwrapped to their text.
     out += wrapEmphasis(emp, inner);
@@ -143,9 +269,12 @@ function serialize(nodes) {
   return out;
 }
 
-// Clean a single block's inner HTML down to canonical inline markup.
-export function cleanInline(html) {
-  return serialize(parseInline(html));
+// Clean a single block's inner HTML down to canonical inline markup. `bodyFont` (the dominant
+// font to treat as the droppable body font) is computed from this fragment when not supplied —
+// callers that span multiple blocks pass the whole-fragment body font for consistent results.
+export function cleanInline(html, bodyFont) {
+  if (bodyFont === undefined) bodyFont = dominantFamily(html);
+  return serialize(parseInline(html), bodyFont);
 }
 
 const asciiTrim = (s) => s.replace(/^[ \t\r\n]+/, "").replace(/[ \t\r\n]+$/, "");
@@ -166,6 +295,7 @@ function alignClass(attrs) {
 // Node cleanup of pasted chapters; the in-browser save path reuses cleanInline per block.
 export function cleanChapterBody(body) {
   const out = [];
+  const bodyFont = dominantFamily(body); // computed once over the whole fragment, not per block
   const re = /<hr\b[^>]*>|<(p|h[1-6])\b([^>]*)>([\s\S]*?)<\/\1>/gi;
   let m;
   while ((m = re.exec(body))) {
@@ -173,7 +303,7 @@ export function cleanChapterBody(body) {
       out.push('<hr class="sb">');
       continue;
     }
-    const inner = asciiTrim(cleanInline(m[3]));
+    const inner = asciiTrim(cleanInline(m[3], bodyFont));
     if (isBlockEmpty(inner)) continue;
     const cls = alignClass(m[2]);
     out.push(`<p${cls ? ` class="${cls}"` : ""}>${inner}</p>`);

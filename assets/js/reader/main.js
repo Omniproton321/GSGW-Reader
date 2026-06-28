@@ -4,6 +4,7 @@
 // localStorage keys used across these modules:
 //   gsgw-theme / gsgw-fs / gsgw-lh   reader preferences            (prefs.js)
 //   gsgw-cmap:<chapterSlug>          cached paragraph comment counts (paragraph-comments.js)
+//   gsgw-ctotals                     cached per-chapter comment totals  (toc-comments.js)
 //   gsgw-progress                    per-chapter reading-progress map (progress.js)
 //   gsgw-last                        slug of the most recently read chapter (progress.js)
 import "./prefs.js";
@@ -11,6 +12,7 @@ import "./settings-panel.js";
 import "./paragraph-comments.js";
 import "./progress.js";
 import "./toc.js";
+import "./toc-comments.js";
 import "./chapter-nav.js";
 
 // Mobile menu toggle: the actionbar + floating chapter-nav are hidden until the FAB is tapped

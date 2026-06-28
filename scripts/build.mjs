@@ -8,7 +8,7 @@ import { dirname, join } from "node:path";
 import { Eta } from "eta";
 import { esc } from "./lib/markdown.mjs";
 import { loadChapters, addParaIds } from "./lib/chapters.mjs";
-import { enhance, validateChapter } from "./lib/enhance.mjs";
+import { enhance, footnotes, validateChapter } from "./lib/enhance.mjs";
 import { buildEpubs } from "./epub.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -28,15 +28,36 @@ try {
 const eta = new Eta({ views: join(ROOT, "templates"), autoEscape: false, autoTrim: false });
 
 // Render a page-body template, then wrap it in the base layout. `title`/`description` are
-// escaped here (templates raw-insert them), matching the old page() helper.
-function page(bodyTemplate, data, { title, description }) {
+// escaped here (templates raw-insert them), matching the old page() helper. `headExtra` is
+// raw <head> markup (e.g. per-chapter font preloads); empty for pages that don't need it.
+function page(bodyTemplate, data, { title, description, headExtra }) {
   const content = eta.render(bodyTemplate, data);
   return eta.render("layouts/base", {
     title: esc(title),
     description: esc(description),
     content,
+    headExtra: headExtra || "",
     links: SITE.links,
   });
+}
+
+// Self-hosted woff2 to <link rel=preload> when a chapter uses its f-* role, so only the faces a
+// chapter actually references are preloaded (unrelated chapters get nothing). f-chat (Comic Sans)
+// is a system font with no file, so it has no preload — the @font-face/.f-* rules live in main.css.
+const FONT_PRELOAD = {
+  script: "/assets/fonts/caveat.woff2",
+  display: "/assets/fonts/lobster.woff2",
+  hand: "/assets/fonts/gloria-hallelujah.woff2",
+  notice: "/assets/fonts/merriweather.woff2",
+  title: "/assets/fonts/spectral.woff2",
+};
+function fontPreloads(bodyHtml) {
+  const roles = new Set([...bodyHtml.matchAll(/class="[^"]*\bf-([a-z]+)\b/g)].map((m) => m[1]));
+  return [...roles]
+    .map((r) => FONT_PRELOAD[r])
+    .filter(Boolean)
+    .map((href) => `<link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin>`)
+    .join("\n    ");
 }
 
 // True once giscus is configured with real values (not missing / placeholder).
@@ -110,13 +131,14 @@ function build() {
     const prev = i > 0 ? chapters[i - 1] : null;
     const nxt = i < chapters.length - 1 ? chapters[i + 1] : null;
     const part = partOf(c.num);
+    const bodyHtml = addParaIds(footnotes(enhance(c.html, ENHANCEMENTS[c.num])), c.slug);
     const html = page(
       "pages/chapter",
       {
         slug: c.slug,
         numEsc: esc(String(c.num)),
         titleEsc: esc(c.title),
-        bodyHtml: addParaIds(enhance(c.html, ENHANCEMENTS[c.num]), c.slug),
+        bodyHtml,
         prev: prev ? prev.slug : null,
         next: nxt ? nxt.slug : null,
         tocHref: tocHref(part),
@@ -126,7 +148,11 @@ function build() {
         giscus: g,
         giscusJson,
       },
-      { title: `${c.title} · ${SITE.site_name}`, description: SITE.description },
+      {
+        title: `${c.title} · ${SITE.site_name}`,
+        description: SITE.description,
+        headExtra: fontPreloads(bodyHtml),
+      },
     );
     writeFileSync(join(CHAPTERS_OUT, `${c.slug}.html`), html);
   });
@@ -150,6 +176,7 @@ function build() {
           chapters: tocChapters,
           partNameEsc: esc(part.name),
           epubHref: epubHref(part.slug),
+          countsApi: comments ? SITE.counts_api || "" : "",
           themes,
         },
         { title: `${part.name} · ${SITE.site_name}`, description: SITE.description },

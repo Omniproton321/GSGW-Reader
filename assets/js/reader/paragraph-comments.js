@@ -189,10 +189,11 @@ import { root, GISCUS_THEME } from "./store.js";
   }
 
   // giscus emits discussion metadata once an embed loads — and again right after the user
-  // posts — so the poster's own paragraph badge ticks up instantly with no round-trip.
+  // posts/reacts — so the poster's own paragraph badge ticks up instantly with no round-trip.
+  // Badge mirrors the Worker: comments (incl. replies) + reactions on the discussion body.
   window.addEventListener("message", function (e) {
     if (e.origin !== "https://giscus.app") return;
     var d = e.data && e.data.giscus && e.data.giscus.discussion;
-    if (d && openTerm) setCount(openTerm, d.totalCommentCount);
+    if (d && openTerm) setCount(openTerm, (+d.totalCommentCount || 0) + (+d.reactionCount || 0));
   });
 })();

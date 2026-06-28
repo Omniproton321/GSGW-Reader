@@ -1,9 +1,11 @@
 <main class="chapter" data-slug="<%= it.slug %>" data-num="<%~ it.numEsc %>" data-title="<%~ it.titleEsc %>">
-  <%~ include("../partials/chapter-nav", { ...it, top: true }) %>
+  <%~ include("../partials/chapter-nav", { ...it, variant: "float" }) %>
+  <%~ include("../partials/chapter-nav", { ...it, variant: "inline-top" }) %>
   <div class="page">
     <header class="chead"><h1><%~ it.titleEsc %></h1></header>
     <article class="cbody" id="cbody"><%~ it.bodyHtml %></article>
   </div>
+  <%~ include("../partials/chapter-nav", { ...it, variant: "inline-bot" }) %>
   <% if (it.comments) { -%>
   <%~ include("../partials/giscus-config", it) %>
   <%~ include("../partials/giscus", it) %>

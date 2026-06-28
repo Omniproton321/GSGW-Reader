@@ -10,6 +10,13 @@ body {
   margin: 0;
   padding: 0;
 }
+/* Disable mobile WebKit/Blink automatic text inflation, which boosts body-text
+   size per-page based on layout width — making font size appear to jump between
+   chapters. 100% (not none) keeps manual pinch-zoom available. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 body {
   background: var(--bg);
   color: var(--fg);
@@ -260,7 +267,11 @@ body.nav-open .ab-toggle .ico-close {
   font-family: var(--serif);
   font-size: var(--read-size);
   line-height: var(--read-lh);
-  overflow-wrap: break-word;
+  /* `anywhere` (not `break-word`): both wrap long unbroken strings AND collapse the
+     element's min-content width. The latter matters because <body> is a column flexbox,
+     so an oversized min-content (e.g. a 100-char run-on word) would force the whole page
+     wider than the viewport and make mobile Safari zoom the entire layout out. */
+  overflow-wrap: anywhere;
 }
 .cbody p {
   margin: 0 0 1.1em;
@@ -297,6 +308,159 @@ body.nav-open .ab-toggle .ico-close {
 }
 .cbody strong {
   font-weight: 700;
+}
+.cbody s {
+  text-decoration: line-through;
+}
+
+/* ---- imported colour roles (mapped from Google Docs colours in gdocs.js; palette in
+   themes.css). Text roles tint the glyphs; <mark> roles tint a translucent background that
+   adapts to any theme. The `muted` role reuses the theme's secondary-text colour. */
+.cbody .c-muted {
+  color: var(--muted);
+}
+.cbody .c-info {
+  color: var(--info);
+}
+.cbody .c-warn {
+  color: var(--warn);
+}
+.cbody .c-danger {
+  color: var(--danger);
+}
+.cbody .c-sign {
+  color: var(--sign);
+}
+.cbody mark {
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 0.15em;
+}
+.cbody mark.c-muted {
+  background: color-mix(in srgb, var(--muted) 22%, transparent);
+}
+.cbody mark.c-info {
+  background: color-mix(in srgb, var(--info) 20%, transparent);
+}
+.cbody mark.c-warn {
+  background: color-mix(in srgb, var(--warn) 24%, transparent);
+}
+.cbody mark.c-danger {
+  background: color-mix(in srgb, var(--danger) 20%, transparent);
+}
+.cbody mark.c-sign {
+  background: color-mix(in srgb, var(--sign) 24%, transparent);
+}
+
+/* ---- imported display fonts (mapped from Google Docs font-families in gdocs.js FONT_ROLES).
+   Self-hosted woff2 (assets/fonts/); the build preloads only the faces a chapter actually uses
+   (see base.eta), and the browser fetches a face only when a .f-* span references it — so a
+   chapter using no special font downloads none. `swap` shows body text immediately, no FOIT.
+   Comic Sans (f-chat) is a system font, so it has no @font-face. */
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/assets/fonts/caveat.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Lobster";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/lobster.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Gloria Hallelujah";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/gloria-hallelujah.woff2") format("woff2");
+}
+/* Merriweather is a real reading serif (variable weight) used for in-world formal notices; it's
+   also used italic in the source, so it ships a true italic face rather than a synthesised oblique. */
+@font-face {
+  font-family: "Merriweather";
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url("/assets/fonts/merriweather.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Merriweather";
+  font-style: italic;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url("/assets/fonts/merriweather-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Spectral";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/spectral.woff2") format("woff2");
+}
+/* These are display/script typefaces with their own built-in character; render them upright
+   (font-style: normal) so an enclosing `note` box's italic doesn't synthesise a faux-oblique. */
+.cbody .f-script {
+  font-family: "Caveat", cursive;
+  font-style: normal;
+}
+.cbody .f-display {
+  font-family: "Lobster", cursive;
+  font-style: normal;
+}
+.cbody .f-hand {
+  font-family: "Gloria Hallelujah", cursive;
+  font-style: normal;
+}
+.cbody .f-chat {
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+/* Reading serif — keeps its real italic/bold (no font-style override), so the notice's
+   <em>/<strong> render as true Merriweather italic/bold. */
+.cbody .f-notice {
+  font-family: "Merriweather", Georgia, serif;
+}
+/* Applied to ch171's title span (font-family from the source doc). The title's letters are
+   Mathematical Bold Script Unicode that Spectral has no glyphs for (they fall back to a system
+   math font); Spectral styles the ASCII characters in the span (brackets, spaces). */
+.cbody .f-title {
+  font-family: "Spectral", Georgia, serif;
+}
+
+/* ---- footnotes / TL notes (build-time; see footnotes() in scripts/lib/enhance.mjs) ------
+   Inline "[N]" markers link down to their "[N]:" definition at the chapter end and back. */
+.cbody .fnref,
+.cbody .fn-num,
+.cbody .fn-src,
+.cbody .fn-back {
+  color: var(--accent);
+  text-decoration: none;
+}
+.cbody .fnref {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.cbody .fnref:hover,
+.cbody .fn-src:hover,
+.cbody .fn-back:hover {
+  text-decoration: underline;
+}
+.cbody .fn-back {
+  margin-left: 0.4em;
+  font-size: 0.9em;
+}
+/* Clear the sticky top nav when jumping, and briefly flash the landing line. */
+.cbody [id^="fn-"],
+.cbody [id^="fnref-"] {
+  scroll-margin-top: 5rem;
+}
+.cbody [id^="fn-"]:target,
+.cbody [id^="fnref-"]:target {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: 3px;
 }
 
 /* ---- special blocks (build-time enhancements; see scripts/lib/enhance.mjs) --------------
@@ -666,6 +830,24 @@ body.nav-open .ab-toggle .ico-close {
   margin-bottom: 1.7em;
 }
 
+/* Vertical text: a word spelled one letter per paragraph (auto: runs of 4+ single-char <p>).
+   Tight line-height stacks the letters into a centered column; red/bold reads as a scream. */
+.cbody > p.verticaltext {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.3em;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  margin: 0;
+  color: color-mix(in srgb, #c0392b 60%, var(--fg));
+}
+.cbody > p.verticaltext-top {
+  margin-top: 1.3em;
+}
+.cbody > p.verticaltext-bot {
+  margin-bottom: 1.3em;
+}
+
 /* Scroll / invitation (listed type "scroll", source frames it with +++): in-world "transformed
    text" — exhibition invitations, manual pages. An aged-parchment card in a formal serif. Fixed
    warm palette (like card/terminal) so it reads the same on every theme. The +++ glyph lines are
@@ -839,7 +1021,44 @@ body.nav-open .ab-toggle .ico-close {
   display: flex;
   align-items: center;
 }
-.chnav-top {
+/* In-flow navs above and below the chapter body (the classic top/bottom bars). */
+.chnav-inline-top,
+.chnav-inline-bot {
+  justify-content: space-between;
+  gap: 1rem;
+}
+.chnav-inline-top {
+  margin: 0 0 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.chnav-inline-bot {
+  margin: 2.5rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+.chnav-inline-top a,
+.chnav-inline-bot a {
+  color: var(--fg);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.92rem;
+}
+.chnav-inline-top a:hover,
+.chnav-inline-bot a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+}
+.chnav-float {
+  transition:
+    opacity 0.2s,
+    visibility 0.2s,
+    transform 0.2s;
   position: fixed;
   left: 50%;
   top: calc(0.9rem + env(safe-area-inset-top));
@@ -857,7 +1076,7 @@ body.nav-open .ab-toggle .ico-close {
   backdrop-filter: blur(10px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
-.chnav-top a {
+.chnav-float a {
   color: var(--fg);
   text-decoration: none;
   white-space: nowrap;
@@ -865,7 +1084,7 @@ body.nav-open .ab-toggle .ico-close {
   border-radius: 999px;
   font-size: 0.9rem;
 }
-.chnav-top a:hover {
+.chnav-float a:hover {
   background: color-mix(in srgb, var(--accent) 18%, transparent);
   color: var(--accent);
   text-decoration: none;
@@ -884,11 +1103,15 @@ body.nav-open .ab-toggle .ico-close {
 .chnav-sel:hover {
   border-color: var(--accent);
 }
-/* Desktop: the floating pill is always visible, so push the chapter down to clear it. (On mobile
-   the pill is hidden behind the FAB, so the base top padding is fine.) */
+/* Desktop: the floating pill auto-hides whenever an in-flow nav is on screen (chapter start /
+   end), so the reader never sees two navs at once. chapter-nav.js toggles .chnav-hidden via an
+   IntersectionObserver. (On mobile the pill is FAB-gated, so this never applies there.) */
 @media (min-width: 681px) {
-  .chapter {
-    padding-top: 4.6rem;
+  .chnav-float.chnav-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(-0.4rem);
   }
 }
 
@@ -915,6 +1138,32 @@ body.nav-open .ab-toggle .ico-close {
 .chlist li.read a {
   color: var(--muted);
 }
+.toc-cc {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.6rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.toc-cc:not(.has) {
+  display: none;
+}
+.toc-cc.has {
+  color: var(--accent);
+}
+.toc-cc svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .ch-toggle {
   flex: 0 0 auto;
   margin-left: 0.6rem;
@@ -926,6 +1175,10 @@ body.nav-open .ab-toggle .ico-close {
   letter-spacing: 0.08em;
   white-space: nowrap;
   padding: 0.2rem 0.6rem;
+  /* Fixed width so "Read" / "NN%" / "Unread" are all the same size — keeps the comment badge
+     to its left aligned in a column across every row. */
+  min-width: 4.2rem;
+  text-align: center;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--bg);
@@ -1272,7 +1525,7 @@ body:has(.actionbar) .site-foot {
     transform: translateX(-50%);
   }
 
-  .chnav-top {
+  .chnav-float {
     position: fixed;
     left: 50%;
     top: calc(2rem + env(safe-area-inset-top));
@@ -1296,14 +1549,14 @@ body:has(.actionbar) .site-foot {
       transform 0.2s,
       visibility 0.2s;
   }
-  body.nav-open .chnav-top {
+  body.nav-open .chnav-float {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     transform: translateX(-50%);
   }
   /* compact, tidy prev/next inside the floating pill (not link-blue) */
-  .chnav-top a {
+  .chnav-float a {
     color: var(--fg);
     text-decoration: none;
     white-space: nowrap;
@@ -1311,10 +1564,10 @@ body:has(.actionbar) .site-foot {
     border-radius: 999px;
     font-size: 0.85rem;
   }
-  .chnav-top a:active {
+  .chnav-float a:active {
     background: color-mix(in srgb, var(--fg) 12%, transparent);
   }
-  .chnav-top .chnav-sel {
+  .chnav-float .chnav-sel {
     max-width: 42vw;
   }
 }

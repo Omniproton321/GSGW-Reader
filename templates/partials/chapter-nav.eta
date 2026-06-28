@@ -1,4 +1,8 @@
-<nav class="chnav<%= it.top ? " chnav-top" : "" %>">
+<% /* Chapter nav. Pass { variant, prev, next, jump, slug }. variant is one of:
+      "float"      — the always-available floating pill (fixed, auto-hidden near the ends)
+      "inline-top" — in-flow bar above the chapter body
+      "inline-bot" — in-flow bar below the chapter body */ -%>
+<nav class="chnav chnav-<%= it.variant %>"<%= it.variant === "float" ? ' aria-label="Chapter navigation"' : "" %>>
   <%~ it.prev ? '<a rel="prev" href="/chapters/' + it.prev + '.html">← Prev</a>' : '<span></span>' %>
   <select class="chnav-sel" aria-label="Jump to chapter">
 <% it.jump.forEach(function (ch) { -%>

@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" class="themed-icon" data-icon="favicon" href="/assets/img/favicon-light.png">
     <link rel="apple-touch-icon" class="themed-icon" data-icon="favicon" href="/assets/img/favicon-light.png">
     <link rel="stylesheet" href="/assets/css/main.css">
+    <%~ it.headExtra %>
     <script>(function(){try{var t=localStorage.getItem('gsgw-theme');if(t)document.documentElement.setAttribute('data-theme',t);var v=(t==='office'||t==='daydream')?'dark':'light';document.querySelectorAll('link.themed-icon').forEach(function(l){l.href='/assets/img/'+l.dataset.icon+'-'+v+'.png';});}catch(e){}})();</script>
   </head>
   <body>

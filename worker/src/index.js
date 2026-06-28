@@ -2,6 +2,7 @@
 //
 // Routes:
 //   GET  /counts?ch=ch222   -> { "ch222-p5": 3, "ch222-p12": 1 }   (public, edge-cached)  [counts.js]
+//   GET  /totals            -> { "ch222": 4, "ch223": 1 }          (public, edge-cached)  [counts.js]
 //   POST /api/auth          -> { token }                            (password -> session)  [auth.js]
 //   GET  /api/chapters      -> [ch222, ch223, ...]                  (auth)                 [chapters.js]
 //   GET  /api/chapter/ch222 -> { number, title, html, ... }         (auth)                 [chapters.js]
@@ -11,7 +12,7 @@
 //   GET  /api/draft-prs     -> { ch222: {pr_url, ...} }             (auth)                 [pr.js]
 //   GET  /api/chapter-drafts-> { ch222: {html, metadata} }          (auth)                 [chapters.js]
 import { cors, json } from "./http.js";
-import { getCounts } from "./counts.js";
+import { getCounts, getTotals } from "./counts.js";
 import { validateSession, authHandler } from "./auth.js";
 import { getChaptersList, getChapter, saveChapter, getChapterDrafts } from "./chapters.js";
 import { createPR, getDraftPRs } from "./pr.js";
@@ -31,6 +32,8 @@ export default {
         res = new Response(null, { status: 204 });
       } else if (url.pathname === "/counts" && req.method === "GET") {
         res = await getCounts(url, env, ctx);
+      } else if (url.pathname === "/totals" && req.method === "GET") {
+        res = await getTotals(url, env, ctx);
       } else if (url.pathname === "/api/auth" && req.method === "POST") {
         res = await authHandler(req, env);
       } else if (url.pathname === "/api/chapters" && req.method === "GET") {
